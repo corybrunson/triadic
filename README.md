@@ -1,12 +1,10 @@
 # triadic
 
-This repo contains code to reproduce the analysis in the paper [*Triadic analysis of affiliation networks*] [1].
+This repo contains code to reproduce the analysis in the paper *Triadic analysis of affiliation networks*.
 
 ## Description
 
 The paper describes an attempt to define and evaluate a new clustering coefficient for affiliation networks, establishing along the way several frameworks for understanding the diversity of possibilities and how they can be compared.
-
-[1]: 
 
 ## Data
 
