@@ -2,6 +2,7 @@
 # within the aggregate, pure, and applied subnetworks,
 # along a fixed-duration sliding window
 library(bitriad)
+source('code/triadic-spec.R')
 source('code/mathrev2igraph.R')
 load('calc/mathrev.RData')
 
@@ -9,10 +10,6 @@ load('calc/mathrev.RData')
 
 pure2 <- sprintf('%02d', 3:59)
 applied2 <- sprintf('%02d', 60:96)
-
-if(!exists('dur')) dur <- 3 # duration of interval or sliding window
-ran <- range(setdiff(mathrev$year, max(mathrev$year))) # incomplete last year
-yrs <- (ran[1] + dur - 1):ran[2]
 
 wedges.df <- function(bigraph) {
     graph <- actor.projection(bigraph)
@@ -43,23 +40,23 @@ wedges.df <- function(bigraph) {
     return(df)
 }
 
-mathrev.wedges <- lapply(yrs, function(yr) {
-    wedges.df(paper.author.graph(mathrev[
-        mathrev$year %in% (yr - dur + 1):yr, ]))
+mathrev.wedges <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
+    wedges.df(as.an(paper.author.graph(mathrev[
+        mathrev$year %in% (yr - dur + 1):yr, ])))
 })
 print('Aggregate done')
 
 mathrev.pure <- mathrev[substr(mathrev$pclass, 1, 2) %in% pure2, ]
-mathrev.pure.wedges <- lapply(yrs, function(yr) {
-    wedges.df(paper.author.graph(mathrev.pure[
-        mathrev.pure$year %in% (yr - dur + 1):yr, ]))
+mathrev.pure.wedges <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
+    wedges.df(as.an(paper.author.graph(mathrev.pure[
+        mathrev.pure$year %in% (yr - dur + 1):yr, ])))
 })
 print('Pure done')
 
 mathrev.applied <- mathrev[substr(mathrev$pclass, 1, 2) %in% applied2, ]
-mathrev.applied.wedges <- lapply(yrs, function(yr) {
-    wedges.df(paper.author.graph(mathrev.applied[
-        mathrev.applied$year %in% (yr - dur + 1):yr, ]))
+mathrev.applied.wedges <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
+    wedges.df(as.an(paper.author.graph(mathrev.applied[
+        mathrev.applied$year %in% (yr - dur + 1):yr, ])))
 })
 print('Applied done')
 

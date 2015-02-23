@@ -13,25 +13,26 @@ applied2 <- sprintf('%02d', 60:96)
 mathrev.degree <- list()
 mathrev.degree[[1]] <- lapply(years[-(1:2)], function(yr) {
     bigraph <-
-        paper.author.graph(mathrev[mathrev$year %in% (yr - dur + 1):yr, ])
+        as.an(paper.author.graph(mathrev[mathrev$year %in% (yr - dur + 1):yr,
+                                         ])
     list(actor = tabulate(degree(bigraph)[which(!V(bigraph)$type)]),
          event = tabulate(degree(bigraph)[which(V(bigraph)$type)]))
 })
 
 mathrev.pure <- mathrev[substr(mathrev$pclass, 1, 2) %in% pure2, ]
 mathrev.degree[[2]] <- lapply(years[-(1:2)], function(yr) {
-    bigraph <- paper.author.graph(mathrev.pure[
+    bigraph <- as.an(paper.author.graph(mathrev.pure[
         mathrev.pure$year %in% (yr - dur + 1):yr,
-        ])
+        ]))
     list(actor = tabulate(degree(bigraph)[which(!V(bigraph)$type)]),
          event = tabulate(degree(bigraph)[which(V(bigraph)$type)]))
 })
 
 mathrev.applied <- mathrev[substr(mathrev$pclass, 1, 2) %in% applied2, ]
 mathrev.degree[[3]] <- lapply(years[-(1:2)], function(yr) {
-    bigraph <- paper.author.graph(mathrev.applied[
+    bigraph <- as.an(paper.author.graph(mathrev.applied[
         mathrev.applied$year %in% (yr - dur + 1):yr,
-        ])
+        ]))
     list(actor = tabulate(degree(bigraph)[which(!V(bigraph)$type)]),
          event = tabulate(degree(bigraph)[which(V(bigraph)$type)]))
 })

@@ -2,6 +2,7 @@
 # within the aggregate, pure, and applied subnetworks,
 # along a fixed-duration sliding window
 library(bitriad)
+source('code/triadic-spec.R')
 source('code/mathrev2igraph.R')
 load('calc/mathrev.RData')
 
@@ -10,18 +11,16 @@ load('calc/mathrev.RData')
 pure2 <- sprintf('%02d', 3:59)
 applied2 <- sprintf('%02d', 60:96)
 
-if(!exists('dur')) dur <- 3 # duration of interval or sliding window
-ran <- range(setdiff(mathrev$year, max(mathrev$year))) # incomplete last year
-yrs <- (ran[1] + dur - 1):ran[2]
-
-mathrev.closes <- lapply(1:(dur - 1), function(d) lapply(yrs, function(yr) {
-    wedge.closure(mathrev, (yr - dur + 1):(yr - d), (yr - d + 1):yr,
-                  type = 'both')
-}))
+mathrev.closes <- lapply(1:(dur - 1), function(d) {
+    lapply((ran[1] + dur - 1):ran[2], function(yr) {
+        wedge.closure(mathrev, (yr - dur + 1):(yr - d), (yr - d + 1):yr,
+                      type = 'both')
+    })
+})
 
 mathrev.pure <- mathrev[substr(mathrev$pclass, 1, 2) %in% pure2, ]
 mathrev.pure.closes <- lapply(1:(dur - 1), function(d) {
-    lapply(yrs, function(yr) {
+    lapply((ran[1] + dur - 1):ran[2], function(yr) {
         wedge.closure(mathrev.pure, (yr - dur + 1):(yr - d), (yr - d + 1):yr,
                       type = 'both')
     })
@@ -29,7 +28,7 @@ mathrev.pure.closes <- lapply(1:(dur - 1), function(d) {
 
 mathrev.applied <- mathrev[substr(mathrev$pclass, 1, 2) %in% applied2, ]
 mathrev.applied.closes <- lapply(1:(dur - 1), function(d) {
-    lapply(yrs, function(yr) {
+    lapply((ran[1] + dur - 1):ran[2], function(yr) {
         wedge.closure(mathrev.applied, (yr - dur + 1):(yr - d), (yr - d + 1):yr,
                       type = 'both')
     })

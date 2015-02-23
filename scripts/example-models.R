@@ -92,4 +92,7 @@ for(i in example.incl) {
 names(example.model) <- names(example)[example.incl]
 save(example.model, file = 'calc/example-model.RData')
 
+for(pkg in c('networksis', 'ergm', 'network')) {
+    detach(paste0('package:', pkg), unload = TRUE)
+}
 rm(list = ls())

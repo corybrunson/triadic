@@ -8,7 +8,7 @@ The paper describes an attempt to define and evaluate a new clustering coefficie
 
 ## Data
 
-The code in this repo makes use of 24 years of data from [*Mathematical Reviews*] [2], available by request to the director of the American Mathematical Society. The code also uses data included in the [`bitriad` package] [3], specifically affiliation networks drawn from the studies [*Deep South: A Social Anthropological Study of Caste and Class*] [4] and [* Social Organization of an Urban Grants Economy: A Study of Business Philanthropy and Non-Profit Organizations*] [5].
+The code in this repo makes use of 24 years of data from [*Mathematical Reviews*] [2], available by request to the director of the American Mathematical Society. If the data obtained is formatted differently, some changes to `code/mathrev2igraph.R` and `scripts/mathrev.R` may be in order. The code also uses data included in the [`bitriad` package] [3], specifically affiliation networks drawn from the studies [*Deep South: A Social Anthropological Study of Caste and Class*] [4] and [*Social Organization of an Urban Grants Economy: A Study of Business Philanthropy and Non-Profit Organizations*] [5].
 
 [2]: http://www.ams.org/mr-database
 [3]: https://github.com/corybrunson/bitriad

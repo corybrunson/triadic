@@ -12,9 +12,9 @@ char2s <- char2s[grep('[0-9]{2}', char2s)]
 char2s.degree <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     lst <- lapply(char2s, function(s) {
-        bigraph <- paper.author.graph(
+        bigraph <- as.an(paper.author.graph(
             dat[substr(dat$pclass, 1, 2) == s, ]
-        )
+        ))
         if(vcount(bigraph) == 0) return(list(actor = c(), event = c()))
         deg <- degree(bigraph)
         list(
@@ -29,8 +29,8 @@ char2s.degree <- lapply(years[-(1:2)], function(yr) {
 char2s.census <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     lst <- lapply(char2s, function(s) {
-        an.triad.census(paper.author.graph(
-            dat[substr(dat$pclass, 1, 2) == s, ]))
+        an.triad.census(as.an(paper.author.graph(
+            dat[substr(dat$pclass, 1, 2) == s, ])))
     })
     names(lst) <- char2s
     return(lst)
@@ -66,7 +66,7 @@ char2s.closed <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     sapply(char2s, function(s) {
         sdat <- dat[substr(dat$pclass, 1, 2) == s, ]
-        dyn.triadic.closure.bigraph(paper.author.graph(sdat),
+        dyn.triadic.closure.bigraph(as.an(paper.author.graph(sdat)),
                                     memory = Inf,
                                     type = 'global')
     })
