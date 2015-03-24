@@ -16,19 +16,19 @@ wedges.df <- function(bigraph) {
     w.s.wedges <- choose(degree(graph), 2)
     w.s.closed <- transitivity(graph, type = 'local') * w.s.wedges
     w.s.closed[which(is.na(w.s.closed))] <- 0
-    df1 <- data.frame(V = w.s.wedges, T = w.s.closed)
-    df1$T[is.nan(df1$T)] <- 0
-    df2 <- do.call(cbind, lapply(
+    df1 <- data.frame(Wedges = w.s.wedges, Closed = w.s.closed)
+    df1$Closed[is.nan(df1$Closed)] <- 0
+    df2 <- as.data.frame(do.call(cbind, lapply(
         c(
             injequ.wedges, # Opsahl
             indstr.wedges, # Exclusive
-            injstr.wedges, # Q
-            injact.wedges, # "Inclusive"
-            indequ.wedges  # "loose exclusive"; constraint
+            injstr.wedges,
+            injact.wedges,
+            indequ.wedges
          ),
         function(f) {
             an.transitivity(bigraph, type = 'both', wedges.fn = f)
-        }))
+        })))
     df <- cbind(df1, df2)
     names(df) <- paste0(rep(c('Classical',
                               'Opsahl',

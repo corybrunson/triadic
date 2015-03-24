@@ -1,6 +1,8 @@
 # triadic
 
-This repo contains code to reproduce the analysis in the paper *Triadic analysis of affiliation networks*.
+This repo contains code to reproduce the analysis in the paper [*Triadic analysis of affiliation networks*] [1].
+
+[1]: http://arxiv.org/abs/1502.07016
 
 ## Description
 
@@ -17,7 +19,7 @@ The code in this repo makes use of 24 years of data from [*Mathematical Reviews*
 
 ## Reproduction
 
-To generate all calculations and visualizations used in the paper, clone this repo to a machine with R installed (version >= 3.0.1) and, from within the `triadic` directory, execute `triadic.R`. Alternatively, open `triadic.R` in a text editor or [RStudio] [6] and execute the commands (mostly sourcing other files) in order. Some of the intensive calculations may take some time to complete.
+To generate all calculations and visualizations used in the paper, clone this repo to a machine with R installed (version >= 3.0.1) and, from within the `triadic` directory, execute `triadic.R`. Alternatively, open `triadic.R` in a text editor or [RStudio] [6] and execute the commands (mostly sourcing other files) in order. Some of the intensive calculations may take a *long* time to complete (e.g. several hours on a 3.2 GHz Intel Core i5).
 
 [6]: http://www.rstudio.com/
 

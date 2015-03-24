@@ -15,12 +15,12 @@ stc.count <- function(ftc, max.xy, max.wz) {
     # Upper bounds on x * y and w + z
     if(missing(max.xy)) {
         max.xy <- max(sapply(1:nrow(ftc), function(i) {
-            lambda <- index.partition(i - 1)
+            lambda <- indexPartition(i - 1)
             lambda[1] * lambda[2]
         }))
     }
     if(missing(max.wz)) {
-        max.wz <- index.partition(nrow(ftc) - 1)[1] + (ncol(ftc) - 1)
+        max.wz <- indexPartition(nrow(ftc) - 1)[1] + (ncol(ftc) - 1)
     }
     
     # Tallies of ordered triples, counts arrayed by (x * y, w + z)
@@ -29,7 +29,7 @@ stc.count <- function(ftc, max.xy, max.wz) {
                       Count = 0)
     for(i in 1:nrow(ftc)) {
         if(all(ftc[i, ] == 0)) next()
-        lambda <- index.partition(i - 1)
+        lambda <- indexPartition(i - 1)
         for(j in 1:ncol(ftc)) {
             if(ftc[i, j] == 0) next()
             w <- j - 1

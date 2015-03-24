@@ -9,7 +9,7 @@ load('calc/example-census.RData')
 ddggs2.ftc <- example.census$DDGGS2
 rownames(ddggs2.ftc) <- paste0('(',
                           apply(sapply(0:(nrow(ddggs2.ftc) - 1),
-                                       index.partition),
+                                       indexPartition),
                                 2, paste, collapse = ','),
                           ')')
 colnames(ddggs2.ftc) <- as.character(0:(ncol(ddggs2.ftc) - 1))
