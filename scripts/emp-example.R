@@ -25,9 +25,9 @@ eval.local <- function(bigraph, vids) {
                        type = 'local', vids = proj.vids),
           opsahl.transitivity(bigraph, type = 'local', vids = vids),
           excl.transitivity(bigraph, type = 'local', vids = vids))
-    if(is.dynamic(bigraph)) {
+    if(is.dyn(bigraph)) {
         el <- cbind(el,
-                    dyn.triadic.closure(bigraph, type = 'local')[proj.vids])
+                    dyn.transitivity(bigraph, type = 'local')[proj.vids])
     }
     el
 }

@@ -29,7 +29,7 @@ char2s.degree <- lapply(years[-(1:2)], function(yr) {
 char2s.census <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     lst <- lapply(char2s, function(s) {
-        an.triad.census(as.an(paper.author.graph(
+        triad.census.an(as.an(paper.author.graph(
             dat[substr(dat$pclass, 1, 2) == s, ])))
     })
     names(lst) <- char2s
@@ -39,14 +39,17 @@ char2s.census <- lapply(years[-(1:2)], function(yr) {
 # Compute global statistics for each subdiscipline
 char2s.global <- lapply(char2s.census, function(lst) {
     do.call(rbind, lapply(lst, function(census) {
-        c('C' = ftc2allact(census),
-          'C.opsahl' = ftc2injequ(census),
-          'C.excl' = ftc2indstr(census),
-          'C.injstr' = ftc2injstr(census),
-          'C.injact' = ftc2injact(census),
-          'T' = ftc2allact(census, by.tri = TRUE),
-          'T.excl' = ftc2indstr(census, by.tri = TRUE),
-          'T.injact' = ftc2injact(census, by.tri = TRUE)
+        c("C" = transitivity.census(census, "classical", scheme = "full"),
+          "C.opsahl" = transitivity.census(census, "opsahl", scheme = "full"),
+          "C.excl" = transitivity.census(census, "exclusive", scheme = "full"),
+          "C.injstr" = transitivity.census(census, "injstr", scheme = "full"),
+          "C.injact" = transitivity.census(census, "injact", scheme = "full"),
+          "T" = transitivity.census(census, "classical", scheme = "full",
+                                    stat = "trans"),
+          "T.excl" = transitivity.census(census, "exclusive", scheme = "full",
+                                         stat = "trans"),
+          "T.injact" = transitivity.census(census, "injact", scheme = "full",
+                                           stat = "trans")
         )
     }))
 })
@@ -66,7 +69,7 @@ char2s.closed <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     sapply(char2s, function(s) {
         sdat <- dat[substr(dat$pclass, 1, 2) == s, ]
-        dyn.triadic.closure.bigraph(as.an(paper.author.graph(sdat)),
+        dyn.transitivity.bigraph(as.an(paper.author.graph(sdat)),
                                     memory = Inf,
                                     type = 'global')
     })

@@ -82,10 +82,10 @@ for(name in ex.incl) {
 }
 
 # Add dynamic triadic closure for dynamic networks
-for(name in ex.incl) if(is.dynamic(example[[name]])) {
+for(name in ex.incl) if(is.dyn(example[[name]])) {
     ex.mats[[name]] <- cbind(
         ex.mats[[name]],
-        Dynamic = dyn.triadic.closure(
+        Dynamic = dyn.transitivity(
             example[[name]], type = 'local'
         )[local.reps(example[[name]])]
     )
@@ -347,7 +347,7 @@ write.table(test.tab, file = file, append = TRUE,
             row.names = TRUE, col.names = FALSE)
 
 # Dynamic triadic closure of DDGGS1
-dtc.ddggs1 <- dyn.triadic.closure(example$DDGGS1)
+dtc.ddggs1 <- dyn.transitivity(example$DDGGS1)
 xtr.ddggs1 <- excl.transitivity(example$DDGGS1, type = 'global', stat = 'trans')
 print(paste('Dynamic triadic closure of DDGGS1 =', round(dtc.ddggs1, 3)))
 print(paste('Exclusive transitivity ratio of DDGGS1 =',

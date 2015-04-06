@@ -43,13 +43,13 @@ ddggs2.tc <- rbind(
         transitivity(actor.projection(ddggs2), type = 'global')
         , opsahl.transitivity(ddggs2, type = 'global')
         , excl.transitivity(ddggs2, type = 'global')
-        #, dyn.triadic.closure(ddggs2, type = 'global')
+        #, dyn.transitivity(ddggs2, type = 'global')
     ),
     do.call(cbind, list(
         transitivity(actor.projection(ddggs2), type = 'local')
         , opsahl.transitivity(ddggs2, type = 'local')
         , excl.transitivity(ddggs2, type = 'local')
-        #, dyn.triadic.closure(ddggs2, type = 'local')
+        #, dyn.transitivity(ddggs2, type = 'local')
     ))
 )
 
