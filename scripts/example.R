@@ -2,13 +2,13 @@
 library(bitriad)
 data(list = data(package = 'bitriad')$results[, 3])
 
-example <- list(DDGGS1 = ddggs.group,
-                DDGGS2 = ddggs.clique,
-                BB = barnes.burkett.corporate,
-                GWF = galaskiewicz.ceos,
-                NMT1 = noordin.top.meetings,
-                NMT2 = noordin.top.organizations,
-                FH = fischer.han.whigs)
+example <- list(DDGGS1 = davis.group,
+                DDGGS2 = davis.clique,
+                BB = chicago1960s,
+                GWF = minneapolis1970s,
+                NMT1 = nmt.meetings,
+                NMT2 = nmt.organizations,
+                FH = whigs)
 
 save(example, file = 'calc/example.RData')
 

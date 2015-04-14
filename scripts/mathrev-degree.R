@@ -14,7 +14,7 @@ mathrev.degree <- list()
 mathrev.degree[[1]] <- lapply(years[-(1:2)], function(yr) {
     bigraph <-
         as.an(paper.author.graph(mathrev[mathrev$year %in% (yr - dur + 1):yr,
-                                         ])
+                                         ]))
     list(actor = tabulate(degree(bigraph)[which(!V(bigraph)$type)]),
          event = tabulate(degree(bigraph)[which(V(bigraph)$type)]))
 })
