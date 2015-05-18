@@ -27,7 +27,7 @@ wedges.df <- function(bigraph) {
             indequ.wedges
          ),
         function(f) {
-            transitivity.an(bigraph, type = 'both', wedge.fun = f)
+            transitivity.an(bigraph, type = 'both', wedgeFun = f)
         })))
     df <- cbind(df1, df2)
     names(df) <- paste0(rep(c('Classical',

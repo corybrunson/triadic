@@ -9,7 +9,7 @@ load('calc/mathrev-closes.RData')
 load('calc/mathrev-closed.RData')
 
 # Which statistics to include
-stats <- c(watts.strogatz.transitivity,
+stats <- c(project.transitivity,
            opsahl.transitivity,
            indequ.transitivity,
            excl.transitivity)

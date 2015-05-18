@@ -58,7 +58,7 @@ plot.triad(c(2, 1, 0), 1, cex = triad.scale, scale = .25,
 dev.off()
 
 # traditional network triads
-tr <- triad.an(c(0, 0, 0), 1)
+tr <- an.triad(c(0, 0, 0), 1)
 layout <- layout.triad(lambda = c(0, 0, 0), w = 1)
 tr2 <- add.edges(delete.vertices(tr, 4), c(1, 2, 2, 3))
 tr3 <- add.edges(tr2, c(1, 3))

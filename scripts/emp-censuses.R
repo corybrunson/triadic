@@ -9,6 +9,7 @@ load('calc/mathrev-census.RData')
 int.incl <- c(1, 3)
 
 # DDGGS2, DDGGS1, GWF, and two MR structural censuses
+ftc2stc <- function(ftc) project.census(ftc, scheme = "full")
 stc.list <- c(
     lapply(example.census[c('DDGGS2', 'DDGGS1', 'GWF')], ftc2stc)
     , lapply(mathrev.census[int.incl], ftc2stc)

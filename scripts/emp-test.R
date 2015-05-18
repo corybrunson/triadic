@@ -61,7 +61,7 @@ mr.mat <- do.call(rbind, mr.mats)
 
 # Local evaluations
 ex.mats <- lapply(ex.incl, function(name) {
-    sapply(c(watts.strogatz.transitivity,
+    sapply(c(project.transitivity,
              opsahl.transitivity,
              excl.transitivity), function(tr) {
                  tr(example[[name]], type = 'local')
