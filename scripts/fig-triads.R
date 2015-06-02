@@ -27,7 +27,7 @@ for(ex in example.triads) {
     img(height = 4 / triad.scale, width = 3.33 / triad.scale,
         file = paste0(figloc, 'fig-triad-',
                       paste(ex[[1]], collapse = ''), '-', ex[[2]], suf))
-    plot.triad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
+    plotTriad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
                events = rep('', sum(unlist(ex))))
     dev.off()
 }
@@ -37,7 +37,7 @@ for(ex in example.triads) {
     img(height = 4 / triad.scale, width = 3.33 / triad.scale,
         file = paste0(figloc, 'fig-triad-anon-',
                       paste(ex[[1]], collapse = ''), '-', ex[[2]], suf))
-    plot.triad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
+    plotTriad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
                actors = rep('', 3),
                events = rep('', sum(unlist(ex))))
     dev.off()
@@ -46,14 +46,14 @@ for(ex in example.triads) {
 par(mar = rep(0, 4))
 img(height = 4 / triad.scale, width = 3.33 / triad.scale,
     file = paste0(figloc, 'fig-triad-induced1', suf))
-plot.triad(c(1, 0, 0), 1, cex = triad.scale, scale = .25,
+plotTriad(c(1, 0, 0), 1, cex = triad.scale, scale = .25,
            actors = c('i', 'j', 'k'), events = c('d', 'e'))
 dev.off()
 
 par(mar = rep(0, 4))
 img(height = 4 / triad.scale, width = 3.33 / triad.scale,
     file = paste0(figloc, 'fig-triad-induced2', suf))
-plot.triad(c(2, 1, 0), 1, cex = triad.scale, scale = .25,
+plotTriad(c(2, 1, 0), 1, cex = triad.scale, scale = .25,
            actors = c('i', 'j', 'k'), events = c('d', 'f', 'g', 'e'))
 dev.off()
 
@@ -66,7 +66,7 @@ layout <- layout[1:3, ]
 xlim <- c(-1.4, 1.4)
 ylim <- c(-1.4, 1.4)
 
-# plot as in plot.triad
+# plot as in plotTriad
 par(mar = rep(0, 4))
 img(height = 4 / triad.scale, width = 3.33 / triad.scale,
     file = paste0(figloc, 'fig-triad-uni2', suf))

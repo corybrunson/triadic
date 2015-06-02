@@ -8,14 +8,14 @@ load('calc/mathrev-census.RData')
 # Which MR intervals to include
 int.incl <- c(1, 3)
 
-# DDGGS2, DDGGS1, GWF, and two MR structural censuses
-ftc2stc <- function(ftc) project.census(ftc, scheme = "full")
+# DG1, GWF, and two MR structural censuses
+ftc2stc <- function(ftc) project.census(ftc, scheme = "full")$structural
 stc.list <- c(
-    lapply(example.census[c('DDGGS2', 'DDGGS1', 'GWF')], ftc2stc)
+    lapply(example.census[c('DG1', 'GWF')], ftc2stc)
     , lapply(mathrev.census[int.incl], ftc2stc)
 )
 names(stc.list) <- c(
-    c('DDGGS2', 'DDGGS1', 'GWF')
+    c('DG1', 'GWF')
     , paste0('MR (',
              paste0(yrs[int.incl] - 2, '-', substr(yrs[int.incl], 4, 4)),
              ')')

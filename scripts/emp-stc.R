@@ -45,8 +45,8 @@ stc.count <- function(ftc, max.xy, max.wz) {
     
 }
 
-# STC data for DDGGS1 and GWF
-wh.ftc <- which(names(example.census) %in% c('DDGGS1', 'GWF'))
+# STC data for DG1 and GWF
+wh.ftc <- which(names(example.census) %in% c('DG1', 'GWF'))
 example.stc <- do.call(rbind, lapply(wh.ftc, function(i) {
     cbind(Network = names(example.census)[i], stc.count(example.census[[i]]))
 }))

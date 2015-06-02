@@ -69,7 +69,7 @@ char2s.closed <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     sapply(char2s, function(s) {
         sdat <- dat[substr(dat$pclass, 1, 2) == s, ]
-        dyn.transitivity.bigraph(as.an(paper.author.graph(sdat)),
+        dyn.transitivity.an(as.an(paper.author.graph(sdat)),
                                     memory = Inf,
                                     type = 'global')
     })

@@ -16,7 +16,7 @@ LCM <- function(vec) {
 
 # Clustering coefficients to include in the analysis
 stat.incl <- c('Classical', 'Opsahl', 'Exclusive')
-ex.incl <- c('DDGGS1', 'GWF')
+ex.incl <- c('DG1', 'GWF')
 
 # Conjoin static global statistics with dynamic triadic closure
 char2s.mats <- lapply(1:length(char2s.global), function(i) {
@@ -85,11 +85,14 @@ for(name in ex.incl) {
 for(name in ex.incl) if(is.dyn(example[[name]])) {
     ex.mats[[name]] <- cbind(
         ex.mats[[name]],
-        Dynamic = dyn.transitivity(
+        Dynamic = dyn.transitivity.an(
             example[[name]], type = 'local'
         )[local.reps(example[[name]])]
     )
 }
+
+# All matrices in one
+mats <- c(ex.mats, list(MR = mr.mat))
 
 # Test names
 test.names <- c(ex.incl, 'MR')
@@ -190,28 +193,76 @@ validity.mat <- rbind(
 )
 rownames(validity.mat) <- test.names
 # Residual plots
-mr.validity.lm <- list(
-    lm(mr.mat[, 'DegreeCorrected'] ~ mr.mat[, 'Opsahl']),
-    lm(mr.mat[, 'Dynamic'] ~ mr.mat[, 'Exclusive'])
+validity.dat <- do.call(
+    rbind, lapply(1:length(mats), function(j) {
+        mat <- mats[[j]]
+        cnames <- intersect(c("DegreeCorrected", "Dynamic"), colnames(mat))
+        dnames <- c("Opsahl", "Exclusive")[
+            which(c("DegreeCorrected", "Dynamic") %in% cnames)
+        ]
+        dat <- do.call(rbind, lapply(1:length(cnames), function(i) {
+            fit <- lm(mat[, cnames[i]] ~ mat[, dnames[i]])
+            data.frame(
+                Statistic = rep(dnames[i], nrow(mat)),
+                Value = as.vector(mat[, dnames[i]]),
+                Residual = fit$residuals
+            )
+        }))
+        dat$Statistic <- factor(dat$Statistic, dnames)
+        dat$Network <- names(mats)[j]
+        dat
+    })
 )
-mr.validity.dat <- data.frame(
-    Statistic = rep(c('Opsahl', 'Exclusive'), each = nrow(mr.mat)),
-    Value = as.vector(mr.mat[, c('Opsahl', 'Exclusive')]),
-    Residual = c(mr.validity.lm[[1]]$residuals, mr.validity.lm[[2]]$residuals)
-)
-mr.validity.dat$Statistic <- factor(mr.validity.dat$Statistic,
-                                     colnames(mr.mat)[2:3])
-mr.validity.plot <- ggplot(data = mr.validity.dat,
-                            aes(x = Value, y = Residual)) +
+## nonsense entry to round out facet_wrap
+validity.dat <- rbind(validity.dat, data.frame(
+    Statistic = "Exclusive", Value = 0, Residual = 0, Network = "GWF"
+))
+validity.plot <- ggplot(data = validity.dat,
+                        aes(x = Value, y = Residual)) +
     geom_point() +
     geom_abline(slope = 0, intercept = 0) +
     expand_limits(y = 0) +
-    facet_wrap(~ Statistic, ncol = 3, scales = 'free') +
+    facet_wrap(~ Statistic + Network, ncol = 3, scales = "free") +
     theme_bw()
-img(width = 2 / 3 * 2 * wid, height = 3 / 4 * wid,
-    file = paste0(figloc, 'fig-validity', suf))
-plot(mr.validity.plot)
+# Move the last frame to the right
+validity.grob <- ggplotGrob(validity.plot)
+## which element to remove
+rm.str <- "(panel|strip_t|axis).*5"
+## remove empty panel
+validity.grob$grobs[grep(rm.str, names(validity.grob$grobs))] <- NULL
+## remove it from the layout
+validity.grob$layout <-
+    validity.grob$layout[-grep(rm.str, (validity.grob$layout)$name), ]
+img(width = 2 * wid, height = (2 * 3 / 4 - 1 / 8) * wid,
+    file = paste0(figloc, "fig-validity", suf))
+plot(validity.grob)
 dev.off()
+# Residual plots (MR only)
+if(FALSE) {
+    mr.validity.lm <- list(
+        lm(mr.mat[, 'DegreeCorrected'] ~ mr.mat[, 'Opsahl']),
+        lm(mr.mat[, 'Dynamic'] ~ mr.mat[, 'Exclusive'])
+    )
+    mr.validity.dat <- data.frame(
+        Statistic = rep(c('Opsahl', 'Exclusive'), each = nrow(mr.mat)),
+        Value = as.vector(mr.mat[, c('Opsahl', 'Exclusive')]),
+        Residual = c(mr.validity.lm[[1]]$residuals,
+                     mr.validity.lm[[2]]$residuals)
+    )
+    mr.validity.dat$Statistic <- factor(mr.validity.dat$Statistic,
+                                        colnames(mr.mat)[2:3])
+    mr.validity.plot <- ggplot(data = mr.validity.dat,
+                               aes(x = Value, y = Residual)) +
+        geom_point() +
+        geom_abline(slope = 0, intercept = 0) +
+        expand_limits(y = 0) +
+        facet_wrap(~ Statistic, ncol = 3, scales = 'free') +
+        theme_bw()
+    img(width = 2 / 3 * 2 * wid, height = 3 / 4 * wid,
+        file = paste0(figloc, 'fig-validity', suf))
+    plot(mr.validity.plot)
+    dev.off()
+}
 
 # DISTINGUISHABILITY
 # (Pooled) coefficient of "indetermination" between pairs of C
@@ -243,35 +294,67 @@ distinguishability.mat <- rbind(
 )
 rownames(distinguishability.mat) <- test.names
 # Residual plots
-mr.distinguishability.lm <- list(
-    lm(mr.mat[, 'Opsahl'] ~ mr.mat[, 'Classical']),
-    lm(mr.mat[, 'Exclusive'] ~ mr.mat[, 'Classical']),
-    lm(mr.mat[, 'Exclusive'] ~ mr.mat[, 'Opsahl'])
+distinguishability.dat <- do.call(
+    rbind, lapply(1:length(mats), function(j) {
+        mat <- mats[[j]]
+        pnames <- combn(c("Classical", "Opsahl", "Exclusive"), 2)
+        dat <- do.call(rbind, lapply(1:ncol(pnames), function(i) {
+            fit <- lm(mat[, pnames[2, i]] ~ mat[, pnames[1, i]])
+            data.frame(
+                Comparison = rep(paste(pnames[, i], collapse = "-"), nrow(mat)),
+                Value = as.vector(mat[, pnames[1, i]]),
+                Residual = fit$residuals
+            )
+        }))
+        dat$Comparison <- factor(dat$Comparison,
+                                 apply(pnames, 2, paste, collapse = "-"))
+        dat$Network <- names(mats)[j]
+        dat
+    })
 )
-mr.distinguishability.dat <- data.frame(
-    Comparison = rep(c('Classical-Opsahl',
-                       'Classical-Exclusive',
-                       'Opsahl-Exclusive'), each = nrow(mr.mat)),
-    Value = as.vector(mr.mat[, c('Classical', 'Classical', 'Opsahl')]),
-    Residual = unlist(lapply(mr.distinguishability.lm,
-                             function(fit) fit$residuals))
-)
-mr.distinguishability.dat$Comparison <-
-    factor(mr.distinguishability.dat$Comparison,
-           c('Classical-Opsahl',
-             'Classical-Exclusive',
-             'Opsahl-Exclusive'))
-mr.distinguishability.plot <- ggplot(data = mr.distinguishability.dat,
-                           aes(x = Value, y = Residual)) +
+distinguishability.plot <- ggplot(data = distinguishability.dat,
+                                  aes(x = Value, y = Residual)) +
     geom_point() +
     geom_abline(slope = 0, intercept = 0) +
     expand_limits(y = 0) +
-    facet_wrap(~ Comparison, ncol = 3, scales = 'free') +
+    facet_wrap(~ Comparison + Network, ncol = 3, scales = 'free') +
     theme_bw()
-img(width = 2 * wid, height = 3 / 4 * wid,
+img(width = 2 * wid, height = (3 * 3 / 4 - 2 * 1 / 8) * wid,
     file = paste0(figloc, 'fig-distinguishability', suf))
-plot(mr.distinguishability.plot)
+plot(distinguishability.plot)
 dev.off()
+# Residual plots (MR only)
+if(FALSE) {
+    mr.distinguishability.lm <- list(
+        lm(mr.mat[, 'Opsahl'] ~ mr.mat[, 'Classical']),
+        lm(mr.mat[, 'Exclusive'] ~ mr.mat[, 'Classical']),
+        lm(mr.mat[, 'Exclusive'] ~ mr.mat[, 'Opsahl'])
+    )
+    mr.distinguishability.dat <- data.frame(
+        Comparison = rep(c('Classical-Opsahl',
+                           'Classical-Exclusive',
+                           'Opsahl-Exclusive'), each = nrow(mr.mat)),
+        Value = as.vector(mr.mat[, c('Classical', 'Classical', 'Opsahl')]),
+        Residual = unlist(lapply(mr.distinguishability.lm,
+                                 function(fit) fit$residuals))
+    )
+    mr.distinguishability.dat$Comparison <-
+        factor(mr.distinguishability.dat$Comparison,
+               c('Classical-Opsahl',
+                 'Classical-Exclusive',
+                 'Opsahl-Exclusive'))
+    mr.distinguishability.plot <- ggplot(data = mr.distinguishability.dat,
+                                         aes(x = Value, y = Residual)) +
+        geom_point() +
+        geom_abline(slope = 0, intercept = 0) +
+        expand_limits(y = 0) +
+        facet_wrap(~ Comparison, ncol = 3, scales = 'free') +
+        theme_bw()
+    img(width = 2 * wid, height = 3 / 4 * wid,
+        file = paste0(figloc, 'fig-distinguishability', suf))
+    plot(mr.distinguishability.plot)
+    dev.off()
+}
 
 # DISCRIMINABILITY
 # (Pooled) standardized variance of values of each C
@@ -290,24 +373,51 @@ discriminability.mat <- rbind(
 )
 rownames(discriminability.mat) <- test.names
 # Histograms
-mr.discriminability.dat <- data.frame(
-    Statistic = rep(c('Classical', 'Opsahl', 'Exclusive'), each = nrow(mr.mat)),
-    Value = as.vector(mr.mat[, c('Classical', 'Opsahl', 'Exclusive')])
-)
-mr.discriminability.dat$Statistic <-
-    factor(mr.discriminability.dat$Statistic,
-           c('Classical', 'Opsahl', 'Exclusive'))
-mr.discriminability.plot <- ggplot(data = mr.discriminability.dat,
-                                     aes(x = Value)) +
+discriminability.dat <- do.call(rbind, lapply(1:length(mats), function(j) {
+    mat <- mats[[j]]
+    dat <- data.frame(
+        Statistic = rep(c('Classical', 'Opsahl', 'Exclusive'),
+                        each = nrow(mat)),
+        Value = as.vector(mat[, c('Classical', 'Opsahl', 'Exclusive')])
+    )
+    dat$Statistic <- factor(dat$Statistic,
+                            c('Classical', 'Opsahl', 'Exclusive'))
+    dat$Network <- names(mats)[j]
+    dat
+}))
+discriminability.plot <- ggplot(data = discriminability.dat,
+                                aes(x = Value)) +
     geom_bar() + stat_bin(binwidth = .02) +
     xlim(0, 1) +
-    ylab('Count') +
-    facet_wrap(~ Statistic, ncol = 3, scales = 'free') +
+    ylab("Count") +
+    facet_wrap(~ Statistic + Network, ncol = 3, scales = "free") +
     theme_bw()
-img(width = 2 * wid, height = 2 / 4 * wid,
+img(width = 2 * wid, height = 3 * 5 / 12 * wid,
     file = paste0(figloc, 'fig-discriminability', suf))
-plot(mr.discriminability.plot)
+plot(discriminability.plot)
 dev.off()
+# Histograms (MR only)
+if(FALSE) {
+    mr.discriminability.dat <- data.frame(
+        Statistic = rep(c('Classical', 'Opsahl', 'Exclusive'),
+                        each = nrow(mr.mat)),
+        Value = as.vector(mr.mat[, c('Classical', 'Opsahl', 'Exclusive')])
+    )
+    mr.discriminability.dat$Statistic <-
+        factor(mr.discriminability.dat$Statistic,
+               c('Classical', 'Opsahl', 'Exclusive'))
+    mr.discriminability.plot <- ggplot(data = mr.discriminability.dat,
+                                       aes(x = Value)) +
+        geom_bar() + stat_bin(binwidth = .02) +
+        xlim(0, 1) +
+        ylab('Count') +
+        facet_wrap(~ Statistic, ncol = 3, scales = 'free') +
+        theme_bw()
+    img(width = 2 * wid, height = 2 / 4 * wid,
+        file = paste0(figloc, 'fig-discriminability', suf))
+    plot(mr.discriminability.plot)
+    dev.off()
+}
 
 # Bind into a single matrix
 test.mat <- rbind(
@@ -346,11 +456,11 @@ write.table(test.tab, file = file, append = TRUE,
             quote = FALSE, sep = ' & ', eol =  ' \\\\\n',
             row.names = TRUE, col.names = FALSE)
 
-# Dynamic triadic closure of DDGGS1
-dtc.ddggs1 <- dyn.transitivity(example$DDGGS1)
-xtr.ddggs1 <- excl.transitivity(example$DDGGS1, type = 'global', stat = 'trans')
-print(paste('Dynamic triadic closure of DDGGS1 =', round(dtc.ddggs1, 3)))
-print(paste('Exclusive transitivity ratio of DDGGS1 =',
-            round(xtr.ddggs1, 3)))
+# Dynamic triadic closure of DG1
+dtc.dg1 <- dyn.transitivity.an(example$DG1)
+xtr.dg1 <- excl.transitivity(example$DG1, type = 'global')
+print(paste('Dynamic triadic closure of DG1 =', round(dtc.dg1, 3)))
+print(paste('Exclusive transitivity ratio of DG1 =',
+            round(xtr.dg1, 3)))
 
 rm(list = ls())

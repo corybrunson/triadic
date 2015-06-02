@@ -27,13 +27,13 @@ eval.local <- function(bigraph, vids) {
           excl.transitivity(bigraph, type = 'local', vids = vids))
     if(is.dyn(bigraph)) {
         el <- cbind(el,
-                    dyn.transitivity(bigraph, type = 'local')[proj.vids])
+                    dyn.transitivity.an(bigraph, type = 'local')[proj.vids])
     }
     el
 }
 
 # Identify desired networks
-wh.ex <- which(names(example) %in% c('DDGGS1', 'GWF'))
+wh.ex <- which(names(example) %in% c('DG1', 'GWF'))
 
 # Compute global statistics
 example.gcc <- t(sapply(example[wh.ex], eval.global))
@@ -43,7 +43,7 @@ colnames(example.gcc) <- c('Classical', 'Opsahl', 'Exclusive')
 print('Global clustering coefficients for small networks')
 print(round(example.gcc, 3))
 
-# Compute global and local statistics on DDGGS1 and GWF
+# Compute global and local statistics on DG1 and GWF
 example.lcc <- lapply(example[wh.ex], function(bigraph) {
     vids <- local.reps(bigraph)
     mat <- eval.local(bigraph, vids = vids)
@@ -57,21 +57,23 @@ example.lcc <- lapply(example[wh.ex], function(bigraph) {
 example.cent <- lapply(example[wh.ex], function(bigraph) {
     # Degree centrality
     deg <- degree(actor.projection(bigraph))
-    # Multidegree centrality
+    # Multidegree (2-walk) centrality
     mdeg.cent <- unit.cent(bigraph, 1)
-    # 4-path centrality
+    # 4-walk centrality
     p.cent <- unit.cent(bigraph, 2)
     # Eigenvector centrality
     eigen.cent <- ev.cent(bigraph)
     cent <- data.frame(
         #Degree = deg / sqrt(sum(deg ^ 2)),
-        TwoPath = mdeg.cent / sqrt(sum(mdeg.cent ^ 2)),
-        #FourPath = p.cent / sqrt(sum(p.cent ^ 2)),
+        TwoWalk = mdeg.cent / sqrt(sum(mdeg.cent ^ 2)),
+        #FourWalk = p.cent / sqrt(sum(p.cent ^ 2)),
         Eigenvector = eigen.cent / sqrt(sum(eigen.cent ^ 2)),
         #DegreeCorrected = eigen.cent / sqrt(sum(eigen.cent ^ 2)) -
         #    mdeg.cent / sqrt(sum(mdeg.cent ^ 2)),
-        FourPathCorrected = eigen.cent / sqrt(sum(eigen.cent ^ 2)) -
-            p.cent / sqrt(sum(p.cent ^ 2))
+        TwoWalkCorrected = eigen.cent / sqrt(sum(eigen.cent ^ 2)) -
+            mdeg.cent / sqrt(sum(mdeg.cent ^ 2))#,
+        #FourWalkCorrected = eigen.cent / sqrt(sum(eigen.cent ^ 2)) -
+        #    p.cent / sqrt(sum(p.cent ^ 2))
     )
     cent[local.reps(bigraph), ]
 })
@@ -126,8 +128,8 @@ print(cent.plot + theme_bw())
 dev.off()
 
 # Which clustering coefficients and centrality scores to include?
-wh.clust <- c('Opsahl', 'Exclusive')
-wh.cent <- c('TwoPath', 'FourPathCorrected')
+wh.clust <- c("Classical", 'Opsahl', 'Exclusive')
+wh.cent <- c('TwoWalk', 'TwoWalkCorrected')
 
 # Plot exclusive clustering coefficient versus degree-corrected centrality
 cent.subplot <- lapply(levels(example.melt2$Network), function(ntwk) {
@@ -138,7 +140,8 @@ cent.subplot <- lapply(levels(example.melt2$Network), function(ntwk) {
         aes(x = Centrality, y = ClusteringCoefficient)
     ) +
         geom_point() +
-        facet_grid(Variety ~ Type, scales = 'free') +
+        #facet_grid(Type ~ Variety, scales = 'free') +
+        facet_wrap(~ Type + Variety, scales = 'free', ncol = 3) +
         geom_smooth(method = 'lm', colour = 'black') +
         #xlab('Degree-corrected eigenvector centrality') +
         ylab('Clustering coefficient')
@@ -147,7 +150,7 @@ names(cent.subplot) <- levels(example.melt2$Network)
 
 # Print subplot
 for(ntwk in levels(example.melt2$Network)) {
-    img(width = 1.5 * wid, height = wid * 4 / 4,
+    img(width = 2 * wid, height = wid * 4 / 4,
         file = paste0(figloc, 'fig-ex-cent-', ntwk, suf))
     print(cent.subplot[[ntwk]] + theme_bw())
     dev.off()
@@ -201,7 +204,7 @@ for(i in 1:length(example.model)) {
 }
 
 # Subset of networks to include in global null model plot
-example.incl <- c('DDGGS1', 'GWF')
+example.incl <- c('DG1', 'GWF')
 index.incl <- which(names(example.model) %in% example.incl)
 global.lst <- lapply(example.model[index.incl], function(lst) lst$global)
 

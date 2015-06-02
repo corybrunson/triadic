@@ -32,8 +32,8 @@ source('scripts/mathrev-char2s.R')
 
 # Illustrative examples
 source('scripts/fig-kite.R')
-source('scripts/fig-ddggs2.R')
-source('scripts/tab-ddggs2.R')
+source('scripts/fig-dg2.R')
+source('scripts/tab-dg2.R')
 source('scripts/fig-triads.R')
 source('scripts/fig-schedule.R')
 

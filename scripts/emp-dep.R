@@ -14,12 +14,12 @@ stats <- c(project.transitivity,
            indequ.transitivity,
            excl.transitivity)
 stat.variety <- c('Classical', 'Opsahl', 'InducedEqual', 'Exclusive')
-ex.incl <- 1:4
-mr.incl <- 1:4
+ex.incl <- c(1, 2, 4)
+mr.incl <- c(1, 2, 4)
 incl.dyn <- FALSE
 
 # Single data frame of wedge-dependent local triadic closure
-example.incl <- which(names(example) %in% c('DDGGS1', 'GWF'))
+example.incl <- which(names(example) %in% c('DG1', 'GWF'))
 example.wedges <- do.call(rbind, unlist(lapply(example.incl, function(i) {
     lapply(ex.incl, function(j) {
         wedges <- stats[[j]](example[[i]], type = '')
@@ -37,7 +37,7 @@ dep.plots <- ggplot(data = example.wedges,
                     aes(x = Wedges, y = Closure,
                         label = Actor)) +
     geom_point() +# geom_text(size = 3) +
-    facet_wrap( ~ Network + Variety, scales = 'free', ncol = 4)
+    facet_wrap( ~ Network + Variety, scales = 'free', ncol = 3)
 
 # Plots
 img(width = 2 * wid, height = wid * 4 / 4,
@@ -47,6 +47,17 @@ dev.off()
 
 # Maximum wedge count for MR
 l.max <- triangular(7)
+
+# Wedge dependency table
+wedge.dependency <-
+    function(wedges) {
+        agg <- aggregate(wedges[, 2], by = list(wedges[, 1]),
+                         FUN = function(x) c(length(x), mean(x)))
+        dat <- as.data.frame(cbind(agg$Group.1, agg$x))
+        names(dat) <- c('l', 'n', 'C')
+        dat$C <- dat$C / dat$l
+        dat[which(dat$l > 0), ]
+    }
 
 # Make data frames of wedge-dependent local triadic closure
 wh.incl <- sapply(stat.variety[mr.incl], function(name) {
@@ -112,7 +123,7 @@ dep.plot <- ggplot(data = dat,
     facet_grid(Variety ~ Interval, scales = 'free_y')
 
 # Plots
-img(width = 2 * wid, height = 1.7 * wid * 4 / 4,
+img(width = 2 * wid, height = 1.25 * wid * 4 / 4,
     file = paste0(figloc, 'fig-agg-dep', suf))
 print(dep.plot + theme_bw())
 dev.off()

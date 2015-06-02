@@ -203,7 +203,6 @@ rm.str <- '(panel|strip_t).*4'
 apa.grob$grobs[grep(rm.str, names(apa.grob$grobs))] <- NULL
 ## remove them from the layout
 apa.grob$layout = apa.grob$layout[-grep(rm.str, (apa.grob$layout)$name), ]
-
 ## move bottom axis to above spot
 apa.grob$layout[grep('axis_b.*4', apa.grob$layout$name), c('t', 'b')] <-
     apa.grob$layout[grep('axis_b.*4', apa.grob$layout$name), c('t', 'b')] / 1.5

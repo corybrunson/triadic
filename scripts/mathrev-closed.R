@@ -13,7 +13,7 @@ applied2 <- sprintf('%02d', 60:96)
 
 mathrev.pure <- mathrev[substr(mathrev$pclass, 1, 2) %in% pure2, ]
 mathrev.pure.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
-    dyn.transitivity.bigraph(
+    dyn.transitivity.an(
         as.an(paper.author.graph(
             mathrev.pure[mathrev.pure$year %in% (yr - dur + 1):yr, ]
         )),
@@ -25,7 +25,7 @@ print('Pure done')
 
 mathrev.applied <- mathrev[substr(mathrev$pclass, 1, 2) %in% applied2, ]
 mathrev.applied.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
-    dyn.transitivity.bigraph(
+    dyn.transitivity.an(
         as.an(paper.author.graph(
             mathrev.applied[mathrev.applied$year %in% (yr - dur + 1):yr, ]
         )),
@@ -36,7 +36,7 @@ mathrev.applied.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
 print('Applied done')
 
 mathrev.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
-    dyn.transitivity.bigraph(
+    dyn.transitivity.an(
         as.an(paper.author.graph(
             mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
         )),

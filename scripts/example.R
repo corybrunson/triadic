@@ -2,8 +2,8 @@
 library(bitriad)
 data(list = data(package = 'bitriad')$results[, 3])
 
-example <- list(DDGGS1 = women.group,
-                DDGGS2 = women.clique,
+example <- list(DG1 = women.group,
+                DG2 = women.clique,
                 BB = chicago1960s,
                 GWF = minneapolis1970s,
                 NMT1 = nmt.meetings,

@@ -11,16 +11,16 @@ load('calc/example.RData')
 N <- 1000  # total number of simulations
 n <- 100   # number of simulations at a time
 # Which example networks to compute diagnostics for
-# DDGGS2: Example
-# DDGGS1: Compare to Opsahl and Liebig-Rao
+# DG2: Example
+# DG1: Compare to Opsahl and Liebig-Rao
 # BB: Compare to Tutzauer
 # GWF: Compare to Faust (1997)
 # NMT1: Compare to Liebig-Rao
 # NMT2: Include in figure
 # FH: Compare to Han
 example.incl <- which(names(example) %in% c(
-    'DDGGS2'
-    , 'DDGGS1'
+    'DG2'
+    , 'DG1'
     #, 'BB'
     #, 'NMT1'
     #, 'NMT2'
@@ -68,11 +68,11 @@ for(i in example.incl) {
         })
         C.O.mat <- sapply(sim[[1]], function(s) {
             wedges <- opsahl.transitivity(s, vids = vs2, type = '')
-            c(sum(wedges$T) / sum(wedges$V), wedges$T / wedges$V)
+            c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
         })
         C.X.mat <- sapply(sim[[1]], function(s) {
             wedges <- excl.transitivity(s, vids = vs2, type = '')
-            c(sum(wedges$T) / sum(wedges$V), wedges$T / wedges$V)
+            c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
         })
         S = 1 / exp(sim$log.prob)
         # Combine with importance wts
@@ -92,7 +92,8 @@ for(i in example.incl) {
 names(example.model) <- names(example)[example.incl]
 save(example.model, file = 'calc/example-model.RData')
 
-for(pkg in c('networksis', 'ergm', 'network')) {
-    detach(paste0('package:', pkg), unload = TRUE)
-}
+detach("package:networksis", unload = TRUE)
+detach("package:ergm", unload = TRUE)
+detach("package:network", unload = TRUE)
+
 rm(list = ls())
