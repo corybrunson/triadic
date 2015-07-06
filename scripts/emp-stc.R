@@ -42,7 +42,6 @@ stc.count <- function(ftc, max.xy, max.wz) {
         }
     }
     dat
-    
 }
 
 # STC data for DG1 and GWF
@@ -85,12 +84,16 @@ stc.dt$Network.alt <- factor(stc.dt$Network,
                                         '',
                                         levels(stc.dt$Network)[3:5]))
 
+# Prevent decimal tick marks
+brksfn <- function(x) {
+    round(waiver(x))
+}
 # Plot!
 stc.plot <- ggplot(data = stc.dt,
                     aes(x = Strength, y = Proportion)) +
     geom_line() +
     facet_wrap(~ Network.alt, ncol = 3, drop = FALSE, scales = 'free') +
-    scale_x_continuous(trans = 'sqrt') +
+    scale_x_continuous(trans = 'sqrt', breaks = (1:4) ^ 2) +
     theme_bw()
 
 # Remove shaded backdrop from this facet
