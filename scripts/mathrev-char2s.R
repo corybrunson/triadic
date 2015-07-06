@@ -44,12 +44,9 @@ char2s.global <- lapply(char2s.census, function(lst) {
           "C.excl" = transitivity.census(census, "exclusive", scheme = "full"),
           "C.injstr" = transitivity.census(census, "injstr", scheme = "full"),
           "C.injact" = transitivity.census(census, "injact", scheme = "full"),
-          "T" = transitivity.census(census, "classical", scheme = "full",
-                                    stat = "trans"),
-          "T.excl" = transitivity.census(census, "exclusive", scheme = "full",
-                                         stat = "trans"),
-          "T.injact" = transitivity.census(census, "injact", scheme = "full",
-                                           stat = "trans")
+          "T" = transitivity.census(census, "classical", scheme = "full"),
+          "T.excl" = transitivity.census(census, "exclusive", scheme = "full"),
+          "T.injact" = transitivity.census(census, "injact", scheme = "full")
         )
     }))
 })
