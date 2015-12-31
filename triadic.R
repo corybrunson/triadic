@@ -29,6 +29,7 @@ source('scripts/mathrev-census.R')
 source('scripts/mathrev-wedges.R')
 source('scripts/mathrev-closed.R')
 source('scripts/mathrev-closes.R')
+source('scripts/mathrev-center.R')
 source('scripts/mathrev-char2s.R')
 
 # Illustrative examples
@@ -45,3 +46,4 @@ source('scripts/emp-test.R')
 source('scripts/emp-apa.R')
 source('scripts/emp-stc.R')
 source('scripts/emp-dep.R')
+source('scripts/emp-cent.R')

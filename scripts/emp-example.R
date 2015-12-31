@@ -5,6 +5,7 @@ library(ggplot2)
 library(reshape2)
 #detach("package:network", unload = TRUE) # needs an if-then shell
 source('code/triadic-base.R')
+source('code/triadic-cent.R')
 source('code/bonacich.centrality.R')
 source('code/random.bipartite.R')
 load('calc/example.RData')
@@ -25,7 +26,7 @@ eval.local <- function(bigraph, vids) {
                        type = 'local', vids = proj.vids),
           opsahl.transitivity(bigraph, type = 'local', vids = vids),
           excl.transitivity(bigraph, type = 'local', vids = vids))
-    if(is.dyn(bigraph)) {
+    if (is.dyn(bigraph)) {
         el <- cbind(el,
                     dyn.transitivity.an(bigraph, type = 'local')[proj.vids])
     }
@@ -85,7 +86,7 @@ example.mats <- lapply(1:length(example.lcc), function(i) {
 names(example.mats) <- names(example)[wh.ex]
 
 # Write tables of local diagnostics
-for(i in 1:length(example.mats)) {
+for (i in 1:length(example.mats)) {
     latex.table(round(example.mats[[i]], 3),
                 digits = 3,
                 align = paste0('l',
@@ -97,8 +98,8 @@ for(i in 1:length(example.mats)) {
 
 # First remove any unshared columns
 intersection <- function(lst) {
-    if(length(lst) == 1) return(lst[[1]])
-    if(length(lst) == 2) return(intersect(lst[[1]], lst[[2]]))
+    if (length(lst) == 1) return(lst[[1]])
+    if (length(lst) == 2) return(intersect(lst[[1]], lst[[2]]))
     intersect(lst[[1]], intersection(lst[-1]))
 }
 incl.col <- intersection(lapply(example.mats, colnames))
@@ -115,8 +116,14 @@ names(example.melt2)[2:5] <- c('Variety',
                                'Centrality')
 
 # Plot clustering coefficients versus centralities by network and statistic
-cent.plot <- ggplot(data = example.melt2,
-                    aes(x = Centrality, y = ClusteringCoefficient)) +
+cent.plot <- if (cvcc) {
+    ggplot(data = example.melt2,
+           aes(x = ClusteringCoefficient, y = Centrality))
+} else {
+    ggplot(data = example.melt2,
+           aes(x = Centrality, y = ClusteringCoefficient))
+}
+cent.plot <- cent.plot +
     geom_point() +
     facet_wrap(Variety + Type ~ Network, ncol = 2, scales = 'free') +
     geom_smooth(method = 'lm', colour = 'black')
@@ -133,23 +140,36 @@ wh.cent <- c('TwoWalk', 'TwoWalkCorrected')
 
 # Plot exclusive clustering coefficient versus degree-corrected centrality
 cent.subplot <- lapply(levels(example.melt2$Network), function(ntwk) {
-    ggplot(
-        data = example.melt2[example.melt2$Variety %in% wh.clust &
-                                 example.melt2$Type %in% wh.cent &
-                                 example.melt2$Network == ntwk, ],
-        aes(x = Centrality, y = ClusteringCoefficient)
-    ) +
+    subplot <- if (cvcc) {
+        ggplot(
+            data = example.melt2[example.melt2$Variety %in% wh.clust &
+                                     example.melt2$Type %in% wh.cent &
+                                     example.melt2$Network == ntwk, ],
+            aes(x = ClusteringCoefficient, y = Centrality)
+        )
+    } else {
+        ggplot(
+            data = example.melt2[example.melt2$Variety %in% wh.clust &
+                                     example.melt2$Type %in% wh.cent &
+                                     example.melt2$Network == ntwk, ],
+            aes(x = Centrality, y = ClusteringCoefficient)
+        )
+    }
+    subplot <- subplot +
         geom_point() +
-        #facet_grid(Type ~ Variety, scales = 'free') +
         facet_wrap(~ Type + Variety, scales = 'free', ncol = 3) +
-        geom_smooth(method = 'lm', colour = 'black') +
-        #xlab('Degree-corrected eigenvector centrality') +
-        ylab('Clustering coefficient')
+        geom_smooth(method = 'lm', colour = 'black')
+    subplot <- if (cvcc) {
+        subplot + xlab('Clustering coefficient')
+    } else {
+        subplot + ylab('Clustering coefficient')
+    }
+    subplot
 })
 names(cent.subplot) <- levels(example.melt2$Network)
 
 # Print subplot
-for(ntwk in levels(example.melt2$Network)) {
+for (ntwk in levels(example.melt2$Network)) {
     img(width = 2 * wid, height = wid * 4 / 4,
         file = paste0(figloc, 'fig-ex-cent-', ntwk, suf))
     print(cent.subplot[[ntwk]] + theme_bw())
@@ -163,8 +183,13 @@ cent.model <- lapply(unique(example.melt2$Network), function(ntwk) {
             dat <- example.melt2[example.melt2$Network == ntwk &
                                     example.melt2$Variety == vr &
                                     example.melt2$Type == ty, ]
-            lm(data = dat,
-               formula = ClusteringCoefficient ~ Centrality)
+            if (cvcc) {
+                lm(data = dat,
+                   formula = Centrality ~ ClusteringCoefficient)
+            } else {
+                lm(data = dat,
+                   formula = ClusteringCoefficient ~ Centrality)
+            }
             
         })
         names(submodels) <- wh.cent
@@ -177,11 +202,13 @@ names(cent.model) <- unique(example.melt2$Network)
 
 # Summaries of models
 print('Clustering coefficient-centrality regression summaries')
-for(ntwk in unique(example.melt$Network)) {
-    for(vr in wh.clust) {
-        for(ty in wh.cent) {
-            print(paste(vr, 'Clustering regressed on',
-                        ty, 'Cetrality',
+for (ntwk in unique(example.melt$Network)) {
+    for (vr in wh.clust) {
+        for (ty in wh.cent) {
+            print(paste(vr,
+                        if (cvcc) 'centrality' else 'clustering',
+                        'regressed on', ty,
+                        if (cvcc) 'clustering' else 'cetrality',
                         'in', ntwk))
             print(summary(cent.model[[ntwk]][[vr]][[ty]]))
         }
@@ -194,8 +221,8 @@ ndig <- 3
 
 
 # Rename model columns
-for(i in 1:length(example.model)) {
-    for(j in 1:length(example.model[[i]])) {
+for (i in 1:length(example.model)) {
+    for (j in 1:length(example.model[[i]])) {
         names(example.model[[i]][[j]])[1:3] <-
             c('Classical',
               'Opsahl',
@@ -215,7 +242,7 @@ hist.grid(lst = global.lst, col = 'darkgray', lty = 'dashed')
 dev.off()
 
 # Local null model plots
-for(i in 1:length(example.incl)) {
+for (i in 1:length(example.incl)) {
     
     # Identify the model results for the desired network's structural reps
     reps <- local.reps(example[[example.incl[[i]]]])

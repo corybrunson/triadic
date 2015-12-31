@@ -2,7 +2,7 @@
 
 This repo contains code to reproduce the analysis in the paper [*Triadic analysis of affiliation networks*] [1].
 
-[1]: http://arxiv.org/abs/1502.07016
+[1]: http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=10081620&fileId=S2050124215000387
 
 ## Description
 
@@ -10,7 +10,7 @@ The paper describes an attempt to define and evaluate a new clustering coefficie
 
 ## Data
 
-The code in this repo makes use of 24 years of data from [*Mathematical Reviews*] [2], available by request to the director of the American Mathematical Society. If the data obtained is formatted differently, some changes to `code/mathrev2igraph.R` and `scripts/mathrev.R` may be in order. The code also uses data included in the [`bitriad` package] [3], specifically affiliation networks drawn from the studies [*Deep South: A Social Anthropological Study of Caste and Class*] [4] and [*Social Organization of an Urban Grants Economy: A Study of Business Philanthropy and Non-Profit Organizations*] [5].
+The code in this repo makes use of 24 years of data from [*Mathematical Reviews*] [2], available by request to the director of the American Mathematical Society. The data may require cleaning in order to match the format assumed by `code/mathrev2igraph.R` and `scripts/mathrev.R`. The code also uses data included in the [`bitriad` package] [3], specifically affiliation networks drawn from the studies [*Deep South: A Social Anthropological Study of Caste and Class*] [4] and [*Social Organization of an Urban Grants Economy: A Study of Business Philanthropy and Non-Profit Organizations*] [5].
 
 [2]: http://www.ams.org/mr-database
 [3]: https://github.com/corybrunson/bitriad
@@ -19,7 +19,12 @@ The code in this repo makes use of 24 years of data from [*Mathematical Reviews*
 
 ## Reproduction
 
-To generate all calculations and visualizations used in the paper, clone this repo to a machine with R installed (version >= 3.0.1) and, from within the `triadic` directory, execute `triadic.R`. Alternatively, open `triadic.R` in a text editor or [RStudio] [6] and execute the commands (mostly sourcing other files) in order. Some of the intensive calculations may take a *long* time to complete (e.g. several hours on a 3.2 GHz Intel Core i5).
+The following steps should generate all calculations and visualizations used in the paper:
+
+* Clone this repo to a machine with R installed (version >= 3.0.1).
+* From within the `triadic` directory, execute `triadic.R`. Alternatively, open `triadic.R` in a text editor or [RStudio] [6] and execute the commands (which mostly source other files) in order. (The file begins by checking for and, as necessary, installing packages required for the analysis.)
+
+Some of the calculations on *MR* data may take a *long* time (e.g. several hours on a 3.2 GHz Intel Core i5).
 
 [6]: http://www.rstudio.com/
 

@@ -14,22 +14,27 @@ nsw.clust <- function(actor.degree, event.degree) {
 }
 
 # Use only first actor in each structural equivalence class
-local.reps <- function(bigraph) {
-    mat <- get.incidence(bigraph)
-    reps <- setdiff(1:nrow(mat),
-                    which(sapply(2:nrow(mat), function(j) {
-                        any(sapply(1:(j - 1), function(k) {
-                            all(mat[j, ] == mat[k, ])
-                        }))})) + 1)
-    names(reps) <- rownames(mat)[reps]
-    return(reps)
+local.reps <- function(bigraph, sparse = FALSE, verbose = FALSE) {
+    # Identify duplicates after grouping by degree
+    act <- V(bigraph)[!V(bigraph)$type]
+    deg <- degree(bigraph, v = act)
+    reps <- c()
+    for (k in sort(setdiff(unique(deg), 1))) {
+        if (verbose) print(paste("Nodes of degree", k))
+        v <- act[which(deg == k)]
+        n <- ego(bigraph, order = 1, nodes = v, mindist = 1)
+        l <- cbind(V(bigraph)[v], t(matrix(unlist(n), nr = k)))
+        d <- duplicated(l[, 2:(k + 1), drop = FALSE])
+        if (any(!d)) reps <- c(reps, act[l[which(!d), 1]])
+    }
+    sort(reps)
 }
 
 # Convert matrices to network objects, perform SISs, export results as matrices
 mat.sis <- function(mat, nsim = 1, save.mats = TRUE, save.labels = FALSE) {
     
     # Use tall, thin matrices
-    mat.fn <- if(ncol(mat) > nrow(mat)) t else identity
+    mat.fn <- if (ncol(mat) > nrow(mat)) t else identity
     
     # Build network object (from tall and thin matrix)
     net <- network(mat.fn(mat))
@@ -39,9 +44,9 @@ mat.sis <- function(mat, nsim = 1, save.mats = TRUE, save.labels = FALSE) {
     sim <- simulate(net, nsim = nsim, save.networks = save.mats)
     
     # Convert network objects to matrices
-    sim[[1]] <- if(is.network(sim[[1]])) mat.fn(as.matrix(sim[[1]])) else
+    sim[[1]] <- if (is.network(sim[[1]])) mat.fn(as.matrix(sim[[1]])) else
         lapply(sim[[1]], function(s) mat.fn(as.matrix(s)))
-    if(save.labels) if(is.matrix(sim[[1]])) {
+    if (save.labels) if (is.matrix(sim[[1]])) {
         rownames(sim[[1]]) <- rownames(mat)
         colnames(sim[[1]]) <- colnames(mat)
     } else
@@ -57,18 +62,18 @@ igraph.sis <- function(bigraph, nsim = 1, save.labels = FALSE) {
     mat <- get.incidence(bigraph)
     sim <- mat.sis(mat, nsim = nsim,
                    save.mats = TRUE, save.labels = save.labels)
-    sim[[1]] <- if(is.matrix(sim[[1]])) graph.incidence(sim[[1]]) else
+    sim[[1]] <- if (is.matrix(sim[[1]])) graph.incidence(sim[[1]]) else
         lapply(sim[[1]], graph.incidence)
     return(sim)
 }
 
-if(FALSE) {
+if (FALSE) {
     
     # 1. Density model
     
     random.bigraph.density <- function(n1, n2, m, type = 'm', size = 1) {
         library(igraph)
-        if(type == 'p') {
+        if (type == 'p') {
             mats <- lapply(1:size, function(i)
                 matrix(replicate(n1 * n2, rbinom(1, 1, m / (n1 * n2)))))
         } else {
@@ -91,10 +96,10 @@ if(FALSE) {
         sim <- simulate(net, nsim = nsim, save.networks = save.mats)[[1]]
         
         # Convert network objects to matrices
-        sim <- if(is.network(sim)) {
+        sim <- if (is.network(sim)) {
             list(as.matrix(sim))
         } else lapply(sim, as.matrix)
-        if(save.labels) if(is.matrix(sim)) {
+        if (save.labels) if (is.matrix(sim)) {
             rownames(sim) <- rownames(mat)
             colnames(sim) <- colnames(mat)
         } else
@@ -106,7 +111,7 @@ if(FALSE) {
     }
     
     random.bigraph.config <- function(deg1, deg2, type = 'm', size = 1) {
-        if(type == 'p') {
+        if (type == 'p') {
             mats <- mat.sis.sample(deg1, deg2, nsim = size)
         } else {
             stop('wiring/subset option not yet implemented')
@@ -125,7 +130,7 @@ if(FALSE) {
     }
     
     random.bigraph.profile <- function(mat, type = 'm', size = 1) {
-        if(type == 'p') {
+        if (type == 'p') {
             mats <- mat.sis.profile.sample(mat, nsim = size)
         } else {
             stop('wiring/subset option not yet implemented')
