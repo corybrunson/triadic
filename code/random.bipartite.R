@@ -41,7 +41,7 @@ mat.sis <- function(mat, nsim = 1, save.mats = TRUE, save.labels = FALSE) {
     net %v% 'set' <- c(rep(1, nrow(mat)), rep(2, ncol(mat)))
     
     # Run simulations and store network objects
-    sim <- simulate(net, nsim = nsim, save.networks = save.mats)
+    sim <- simulate.sisnetwork(net, nsim = nsim, save.networks = save.mats)
     
     # Convert network objects to matrices
     sim[[1]] <- if (is.network(sim[[1]])) mat.fn(as.matrix(sim[[1]])) else
