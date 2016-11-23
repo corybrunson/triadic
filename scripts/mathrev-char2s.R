@@ -29,7 +29,7 @@ char2s.degree <- lapply(years[-(1:2)], function(yr) {
 char2s.census <- lapply(years[-(1:2)], function(yr) {
     dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     lst <- lapply(char2s, function(s) {
-        triad.census.an(as.an(paper.author.graph(
+        triad_census_an(as.an(paper.author.graph(
             dat[substr(dat$pclass, 1, 2) == s, ])))
     })
     names(lst) <- char2s

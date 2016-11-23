@@ -13,7 +13,7 @@ applied2 <- sprintf('%02d', 60:96)
 
 mathrev.applied <- mathrev[substr(mathrev$pclass, 1, 2) %in% applied2, ]
 mathrev.applied.census <- lapply(yrs, function(yr) {
-    triad.census.an(as.an(paper.author.graph(mathrev.applied[
+    triad_census_an(as.an(paper.author.graph(mathrev.applied[
         mathrev.applied$year %in% (yr - dur + 1):yr, ])), verbose = TRUE)
 })
 mathrev.applied.unif.census <- lapply(mathrev.applied.census,
@@ -25,7 +25,7 @@ save(mathrev.applied.census, mathrev.applied.unif.census,
 
 mathrev.pure <- mathrev[substr(mathrev$pclass, 1, 2) %in% pure2, ]
 mathrev.pure.census <- lapply(yrs, function(yr) {
-    triad.census.an(as.an(paper.author.graph(mathrev.pure[
+    triad_census_an(as.an(paper.author.graph(mathrev.pure[
         mathrev.pure$year %in% (yr - dur + 1):yr, ])), verbose = TRUE)
 })
 mathrev.pure.unif.census <- lapply(mathrev.pure.census,
@@ -36,7 +36,7 @@ save(mathrev.applied.census, mathrev.pure.unif.census,
      file = 'calc/mathrev-pure-census.RData')
 
 mathrev.census <- lapply(yrs, function(yr) {
-    triad.census.an(as.an(paper.author.graph(mathrev[
+    triad_census_an(as.an(paper.author.graph(mathrev[
         mathrev$year %in% (yr - dur + 1):yr, ])), verbose = TRUE)
 })
 mathrev.unif.census <- lapply(mathrev.census,
