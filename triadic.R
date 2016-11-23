@@ -16,7 +16,7 @@ if(grepl("/triadic$", getwd())) {
 } else stop("Go to (or create) directory 'triadic'.")
 
 # Remove temp variables
-rm(ipak, d, dirs)
+rm(list = ls())
 
 # Clean data sets
 source("scripts/example.R") # single data frame
