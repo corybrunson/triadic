@@ -1,6 +1,7 @@
 # Transitivity of example networks rel. to null bipartite configuration model
+library(igraph)
 library(bitriad)
-library(networksis)
+#library(networksis)
 source('code/random.bipartite.R')
 load('calc/example.RData')
 ####
@@ -19,17 +20,17 @@ n <- 100   # number of simulations at a time
 # NMT2: Include in figure
 # FH: Compare to Han
 example.incl <- which(names(example) %in% c(
-    'DG2'
-    , 'DG1'
-    #, 'BB'
-    #, 'NMT1'
-    #, 'NMT2'
-    , 'GWF'
-    #, 'FH'
+  'DG2'
+  , 'DG1'
+  #, 'BB'
+  #, 'NMT1'
+  #, 'NMT2'
+  , 'GWF'
+  #, 'FH'
 ))
 
 # Use only first actor in each structural equivalence class
-example.reps <- lapply(example, local.reps)
+example.reps <- lapply(example, local_reps)
 names(example.reps) <- names(example)
 
 # SHOULD HAVE MADE OBSERVATION DATA FRAME SEPARATE FROM LIST OF
@@ -38,56 +39,56 @@ names(example.reps) <- names(example)
 # Local classical, Opsahl, and exclusive clustering
 example.model <- list()
 for(i in example.incl) {
-    print(names(example)[i])
-    graph <- actor.projection(example[[i]])
-    #vc <- vcount(graph)
-    vs1 <- example.reps[[i]]
-    vs2 <- which(V(example[[i]])$type == 0)[vs1] # CAUTION
-    # Compute local diagnostics on empirical networks
-    C.vec <- c(transitivity(graph, type = 'global'),
-               transitivity(graph, type = 'local', vids = vs1))
-    C.O.vec <- c(opsahl.transitivity(example[[i]], type = 'global'),
-                 opsahl.transitivity(example[[i]], type = 'local', vids = vs2))
-    C.X.vec <- c(excl.transitivity(example[[i]], type = 'global'),
-                 excl.transitivity(example[[i]], type = 'local', vids = vs2))
-    # Initialization of data frames, one for each actor
-    dfs <- lapply(0:length(vs1), function(v) {
-        data.frame(C = C.vec[v + 1],
-                   C.O = C.O.vec[v + 1],
-                   C.X = C.X.vec[v + 1],
-                   W = NA)
+  print(names(example)[i])
+  graph <- actor_projection(example[[i]])
+  #vc <- vcount(graph)
+  vs1 <- example.reps[[i]]
+  vs2 <- which(V(example[[i]])$type == 0)[vs1] # CAUTION
+  # Compute local diagnostics on empirical networks
+  C.vec <- c(transitivity(graph, type = 'global'),
+             transitivity(graph, type = 'local', vids = vs1))
+  C.O.vec <- c(opsahl_transitivity(example[[i]], type = 'global'),
+               opsahl_transitivity(example[[i]], type = 'local', vids = vs2))
+  C.X.vec <- c(excl_transitivity(example[[i]], type = 'global'),
+               excl_transitivity(example[[i]], type = 'local', vids = vs2))
+  # Initialization of data frames, one for each actor
+  dfs <- lapply(0:length(vs1), function(v) {
+    data.frame(C = C.vec[v + 1],
+               C.O = C.O.vec[v + 1],
+               C.X = C.X.vec[v + 1],
+               W = NA)
+  })
+  while(nrow(dfs[[1]]) <= N) {
+    # Run n simulations at a time
+    sim <- igraph_sis(example[[i]], nsim = n)
+    # Compute C, C.O, and C.X
+    C.mat <- sapply(sim[[1]], function(s) {
+      s.proj <- actor_projection(s)
+      c(transitivity(s.proj, type = 'global'),
+        transitivity(s.proj, vids = vs1, type = 'local'))
     })
-    while(nrow(dfs[[1]]) <= N) {
-        # Run n simulations at a time
-        sim <- igraph.sis(example[[i]], nsim = n)
-        # Compute C, C.O, and C.X
-        C.mat <- sapply(sim[[1]], function(s) {
-            s.proj <- actor.projection(s)
-            c(transitivity(s.proj, type = 'global'),
-              transitivity(s.proj, vids = vs1, type = 'local'))
-        })
-        C.O.mat <- sapply(sim[[1]], function(s) {
-            wedges <- opsahl.transitivity(s, vids = vs2, type = '')
-            c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
-        })
-        C.X.mat <- sapply(sim[[1]], function(s) {
-            wedges <- excl.transitivity(s, vids = vs2, type = '')
-            c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
-        })
-        S = 1 / exp(sim$log.prob)
-        # Combine with importance wts
-        dfs.app <- lapply(0:length(vs1), function(v) {
-            data.frame(C = C.mat[v + 1, ],
-                       C.O = C.O.mat[v + 1, ],
-                       C.X = C.X.mat[v + 1, ],
-                       W = S / sum(S))
-        })
-        dfs <- lapply(1:length(dfs), function(j) rbind(dfs[[j]], dfs.app[[j]]))
-        names(dfs) <- c('global', V(graph)$name[vs1])
-        print(nrow(dfs[[1]]) - 1)
-    }
-    example.model <- c(example.model, list(dfs))
-    save(example.model, file = 'calc/example-model.RData')
+    C.O.mat <- sapply(sim[[1]], function(s) {
+      wedges <- opsahl_transitivity(s, vids = vs2, type = '')
+      c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
+    })
+    C.X.mat <- sapply(sim[[1]], function(s) {
+      wedges <- excl_transitivity(s, vids = vs2, type = '')
+      c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
+    })
+    S = 1 / exp(sim$log.prob)
+    # Combine with importance wts
+    dfs.app <- lapply(0:length(vs1), function(v) {
+      data.frame(C = C.mat[v + 1, ],
+                 C.O = C.O.mat[v + 1, ],
+                 C.X = C.X.mat[v + 1, ],
+                 W = S / sum(S))
+    })
+    dfs <- lapply(1:length(dfs), function(j) rbind(dfs[[j]], dfs.app[[j]]))
+    names(dfs) <- c('global', V(graph)$name[vs1])
+    print(nrow(dfs[[1]]) - 1)
+  }
+  example.model <- c(example.model, list(dfs))
+  save(example.model, file = 'calc/example-model.RData')
 }
 names(example.model) <- names(example)[example.incl]
 save(example.model, file = 'calc/example-model.RData')
