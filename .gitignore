@@ -41,4 +41,4 @@ fig/*
 tab/*
 paper/*
 .Rhistory
-
+inst/doc
