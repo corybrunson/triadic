@@ -15,6 +15,9 @@ if(grepl("/triadic$", getwd())) {
   for(d in dirs) if(!file.exists(d)) dir.create(d)
 } else stop("Go to (or create) directory 'triadic'.")
 
+# Remove temp variables
+rm(ipak, d, dirs)
+
 # Clean data sets
 source("scripts/example.R") # single data frame
 source("scripts/mathrev.R") # separate graph objects
