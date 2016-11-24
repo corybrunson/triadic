@@ -1,5 +1,4 @@
 # Setup
-library(igraph)
 library(bitriad)
 library(ggplot2)
 source('code/triadic-base.R')

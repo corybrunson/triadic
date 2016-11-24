@@ -1,5 +1,4 @@
 # Figure: Example triads, including canonical open and closed wedges
-library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 

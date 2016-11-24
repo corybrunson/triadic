@@ -4,8 +4,10 @@ ipak <- function(pkg) {
     if(length(new.pkg)) 
         install.packages(new.pkg, dependencies = TRUE)
 }
-ipak(c('devtools', 'igraph', 'networksis', 'ggplot2', 'xtable',
-       "grid", "reshape2"))
+ipak(c('devtools',
+       'igraph', 'networksis',
+       'ggplot2', 'xtable', 'grid',
+       'reshape2', 'dplyr'))
 for(pkg in c('bitriad')) {
     if(!(pkg %in% installed.packages()[, 'Package']))
         install_github(paste0('corybrunson/', pkg))

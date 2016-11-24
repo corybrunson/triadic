@@ -1,5 +1,4 @@
 # Setup
-library(igraph)
 library(bitriad)
 library(xtable)
 library(ggplot2)

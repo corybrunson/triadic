@@ -1,5 +1,4 @@
 # Figure: Overlapping time series of global diagnostics on the MR network
-library(igraph)
 library(bitriad)
 source('code/mathrev2igraph.R')
 source('code/triadic-spec.R')

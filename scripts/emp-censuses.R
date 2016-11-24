@@ -1,5 +1,4 @@
 # Setup
-library(igraph)
 library(bitriad)
 library(xtable)
 source('code/triadic-base.R')

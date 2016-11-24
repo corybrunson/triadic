@@ -1,5 +1,4 @@
 # Figure: An affiliation network and two of its scheduled subgraphs
-library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 

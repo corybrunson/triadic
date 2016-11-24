@@ -1,5 +1,4 @@
 # Figure: The two-mode kite graph and two possible lifts of it
-library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 

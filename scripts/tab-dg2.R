@@ -1,5 +1,4 @@
 # Table: Full census and triadic closure measures for DG2
-library(igraph)
 library(bitriad)
 library(xtable)
 source('code/triadic-base.R')

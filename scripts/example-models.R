@@ -1,5 +1,4 @@
 # Transitivity of example networks rel. to null bipartite configuration model
-library(igraph)
 library(bitriad)
 #library(networksis)
 source('code/random-bipartite.R')

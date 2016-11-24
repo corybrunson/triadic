@@ -1,7 +1,6 @@
 # Triad censuses of Mathematical Reviews network,
 # within the aggregate, pure, and applied subnetworks,
 # over evenly-spaced intervals of equal duration
-library(igraph)
 library(bitriad)
 source('code/mathrev2igraph.R')
 source('code/triadic-spec.R')

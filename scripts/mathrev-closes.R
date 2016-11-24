@@ -1,7 +1,6 @@
 # Wedge closure in the Mathematical Reviews network,
 # within the aggregate, pure, and applied subnetworks,
 # along a fixed-duration sliding window
-library(igraph)
 library(bitriad)
 source('code/triadic-spec.R')
 source('code/mathrev2igraph.R')

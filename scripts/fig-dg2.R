@@ -1,5 +1,4 @@
 # Figure: DG2 and its one-mode projection
-library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 load('calc/example.RData')
