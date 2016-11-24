@@ -93,8 +93,4 @@ for(i in example.incl) {
 names(example.model) <- names(example)[example.incl]
 save(example.model, file = 'calc/example-model.RData')
 
-detach("package:networksis", unload = TRUE)
-detach("package:ergm", unload = TRUE)
-detach("package:network", unload = TRUE)
-
 rm(list = ls())
