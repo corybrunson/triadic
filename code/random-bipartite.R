@@ -5,7 +5,7 @@ moment <- function(dist, n, mode = 'frequency') {
                            'value' = tabulate(dist)))
   sum(((1:length(vec)) ^ n) * vec)
 }
-nsw_clust <- function(actor.degree, event.degree) {
+nsw.clust <- function(actor.degree, event.degree) {
   1 / (((moment(actor.degree, 2) - moment(actor.degree, 1)) *
           (moment(event.degree, 2) - moment(event.degree, 1)) ^ 2) /
          (moment(actor.degree, 1) * moment(event.degree, 1) *
@@ -14,7 +14,7 @@ nsw_clust <- function(actor.degree, event.degree) {
 }
 
 # Use only first actor in each structural equivalence class
-local_reps <- function(bigraph, sparse = FALSE, verbose = FALSE) {
+local.reps <- function(bigraph, sparse = FALSE, verbose = FALSE) {
   # Identify duplicates after grouping by degree
   act <- V(bigraph)[!V(bigraph)$type]
   deg <- degree(bigraph, v = act)

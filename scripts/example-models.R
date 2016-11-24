@@ -30,7 +30,7 @@ example.incl <- which(names(example) %in% c(
 ))
 
 # Use only first actor in each structural equivalence class
-example.reps <- lapply(example, local_reps)
+example.reps <- lapply(example, local.reps)
 names(example.reps) <- names(example)
 
 # SHOULD HAVE MADE OBSERVATION DATA FRAME SEPARATE FROM LIST OF

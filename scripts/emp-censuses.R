@@ -1,4 +1,5 @@
 # Setup
+library(igraph)
 library(bitriad)
 library(xtable)
 source('code/triadic-base.R')
@@ -9,7 +10,7 @@ load('calc/mathrev-census.RData')
 int.incl <- c(1, 3)
 
 # DG1, GWF, and two MR structural censuses
-ftc2stc <- function(ftc) project.census(ftc, scheme = "full")$structural
+ftc2stc <- function(ftc) project_census(ftc, scheme = "full")$structural
 stc.list <- c(
     lapply(example.census[c('DG1', 'GWF')], ftc2stc)
     , lapply(mathrev.census[int.incl], ftc2stc)
