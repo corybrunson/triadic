@@ -25,7 +25,7 @@ paper.author.graph <- function(data, directed = FALSE) {
   vdf <- data.frame(id = c(data$index, uniq.authors),
                     pclass = c(data$pclass, rep(NA, length(uniq.authors))),
                     time = c(data$year, rep(NA, length(uniq.authors))))
-  graph <- graph.data.frame(edf, directed = directed, vertices = vdf)
+  graph <- graph_from_data_frame(edf, directed = directed, vertices = vdf)
   V(graph)$type <- !(substr(V(graph)$name, 3, 3) %in% letters)
   graph
 }
@@ -42,7 +42,7 @@ paper.subject.graph <- function(data, chars = 5, directed = FALSE) {
     sep = ','
   ), strsplit, split = ',')), nc = 2, byrow = TRUE))
   vdf <- data.frame(id = c(data$index, uniq.subjects))
-  graph <- graph.data.frame(edf, directed = directed, vertices = vdf)
+  graph <- graph_from_data_frame(edf, directed = directed, vertices = vdf)
   V(graph)$type <- nchar(V(graph)$name) > 5
   graph
 }
@@ -67,7 +67,7 @@ author.graph <- function(
     alst,
     function(vec) if(length(vec) == 1) 0 else choose(length(vec), 2)
   )))
-  graph <- graph.data.frame(el, directed = FALSE,
+  graph <- graph_from_data_frame(el, directed = FALSE,
                             vertices = data.frame(unique(unlist(alst))))
   if(weighted) {
     E(graph)$weight <- rep(sapply(alst, wt),
@@ -115,8 +115,8 @@ paper.graph <- function(data, char = 'pureapplied',
   stopifnot(all(data$index == V(bigraph)$name[V(bigraph)$type]))
   V(bigraph)$sub[V(bigraph)$type] <- if(char == 'pureapplied')
     pure.or.applied(data$pclass) else as.numeric(substr(data$pclass, 1, char))
-  graph <- bipartite.projection(bigraph, multiplicity = multiplicity)[[1]]
-  if(!keep) graph <- delete.vertices(graph, which(is.na(V(graph)$sub)))
+  graph <- bipartite_projection(bigraph, multiplicity = multiplicity)[[1]]
+  if(!keep) graph <- delete_vertices(graph, which(is.na(V(graph)$sub)))
   graph
 }
 
@@ -129,7 +129,7 @@ assortativity.productivity <- function(data, baseline = FALSE, rm1 = FALSE) {
   }))]
   if(baseline) return(assortativity(wgraph, types1 = ppa))
   m <- ecount(wgraph)
-  edges <- get.edgelist(wgraph, names = FALSE)
+  edges <- as_edgelist(wgraph, names = FALSE)
   cwt <- E(wgraph)$weight
   if(rm1) {
     ww <- which((ppa[edges[, 1]] > 1) & (ppa[edges[, 2]] > 1))
@@ -163,19 +163,19 @@ vee.closure <- function(data, window, increment) {
     el.0 <- author.edgelist(data[data$year %in% window, ])
     if(dim(el.0)[1] == 0) return(NA)
     el.1 <- author.edgelist(data[data$year %in% increment, ])
-    g.0 <- simplify(graph.data.frame(el.0, directed = FALSE))
+    g.0 <- simplify(graph_from_data_frame(el.0, directed = FALSE))
     denom <- sum(sapply(neighborhood(g.0, order = 2), length) -
                      degree(g.0) - 1) / 2
     el <- data.frame(V1 = c(el.0[, 1], el.1[, 1]),
                      V2 = c(el.0[, 2], el.1[, 2]),
                      old = c(rep(TRUE, dim(el.0)[1]), rep(FALSE, dim(el.1)[1])))
-    g <- simplify(graph.data.frame(el, directed = FALSE),
+    g <- simplify(graph_from_data_frame(el, directed = FALSE),
                   edge.attr.comb = list(old = any))
     E.new <- which(!E(g)$old)
     num <- sum(sapply(E.new, function(e) {
         ge <- get.edge(g, e)
         if(!(all(ge <= vcount(g.0)))) 0 else
-            (shortest.paths(g.0, ge[1], ge[2]) == 2)
+            (shortest_paths(g.0, ge[1], ge[2]) == 2)
     }))
     num / denom
 }
@@ -188,7 +188,7 @@ wedge.closure <- function(data, window, increment, type = 'global') {
     # Two-column list of edges in "increment" graph using author names
     el.1 <- author.edgelist(data[data$year %in% increment, ])
     # Graph object based on "present" edges
-    g.0 <- simplify(graph.data.frame(el.0, directed = FALSE))
+    g.0 <- simplify(graph_from_data_frame(el.0, directed = FALSE))
     # The denominator is the number of open wedges at each node
     denom <- round(transitivity(g.0, type = 'local') * choose(degree(g.0), 2))
     
@@ -197,13 +197,13 @@ wedge.closure <- function(data, window, increment, type = 'global') {
                      V2 = c(el.0[, 2], el.1[, 2]),
                      old = c(rep(TRUE, dim(el.0)[1]), rep(FALSE, dim(el.1)[1])))
     # Graph object based on all edges with indicator for edges extant in g.0
-    g <- simplify(graph.data.frame(el, directed = FALSE),
+    g <- simplify(graph_from_data_frame(el, directed = FALSE),
                   edge.attr.comb = list(old = any))
     # Vector of nodes of g.0 (if any) corresponding to nodes of g
     v.0 <- match(V(g)$name, V(g.0)$name)
     # Identify nodes with wedges in g.0 closed by each new edge in g
     vs.0 <- lapply(which(!E(g)$old), function(e) {
-        ge <- get.edges(g, e)
+        ge <- ends(g, e)
         if(any(is.na(v.0[ge]))) return(c()) else
             do.call(intersect, neighborhood(g.0, v.0[ge], order = 1))
     })
