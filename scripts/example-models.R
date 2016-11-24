@@ -2,7 +2,7 @@
 library(igraph)
 library(bitriad)
 #library(networksis)
-source('code/random.bipartite.R')
+source('code/random-bipartite.R')
 load('calc/example.RData')
 ####
 # INCORPORATE THE GLOBAL CALCULATIONS INTO THE LOCAL LOOP;

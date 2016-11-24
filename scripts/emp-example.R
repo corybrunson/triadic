@@ -7,7 +7,7 @@ library(reshape2)
 source('code/triadic-base.R')
 source('code/triadic-cent.R')
 source('code/bonacich.centrality.R')
-source('code/random.bipartite.R')
+source('code/random-bipartite.R')
 load('calc/example.RData')
 load('calc/example-model.RData')
 

@@ -6,7 +6,7 @@ library(reshape2)
 #detach("package:network", unload = TRUE) # needs an if-then shell
 source('code/triadic-base.R')
 source('code/triadic-cent.R')
-#source('code/random.bipartite.R')
+#source('code/random-bipartite.R')
 
 load('calc/mathrev-wedges.RData')
 load("calc/mathrev-center.RData")
