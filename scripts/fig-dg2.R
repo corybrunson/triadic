@@ -1,10 +1,11 @@
 # Figure: DG2 and its one-mode projection
+library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 load('calc/example.RData')
 
 dg <- example$DG2
-dg.proj <- actor.projection(dg)
+dg.proj <- actor_projection(dg)
 
 # Layouts for two-mode network and its one-mode projection
 set.seed(10)

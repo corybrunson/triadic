@@ -1,4 +1,5 @@
 # Figure: Example triads, including canonical open and closed wedges
+library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 
@@ -6,67 +7,67 @@ triad.scale <- 1.2
 
 # Plot example triads
 example.triads <- list(
-    list(c(0,0,0), 0),
-    list(c(0,0,0), 1),
-    list(c(0,0,0), 2),
-    list(c(0,0,0), 3),
-    list(c(1,0,0), 0),
-    list(c(1,0,0), 1),
-    list(c(1,0,0), 2),
-    list(c(1,1,0), 0),
-    list(c(1,1,0), 1),
-    list(c(1,1,1), 0),
-    list(c(1,1,1), 1),
-    list(c(2,0,0), 0),
-    list(c(2,1,0), 1),
-    list(c(2,1,1), 0)
+  list(c(0,0,0), 0),
+  list(c(0,0,0), 1),
+  list(c(0,0,0), 2),
+  list(c(0,0,0), 3),
+  list(c(1,0,0), 0),
+  list(c(1,0,0), 1),
+  list(c(1,0,0), 2),
+  list(c(1,1,0), 0),
+  list(c(1,1,0), 1),
+  list(c(1,1,1), 0),
+  list(c(1,1,1), 1),
+  list(c(2,0,0), 0),
+  list(c(2,1,0), 1),
+  list(c(2,1,1), 0)
 )
 
 for(ex in example.triads) {
-    par(mar = rep(0, 4))
-    img(height = 4 / triad.scale, width = 3.33 / triad.scale,
-        file = paste0(figloc, 'fig-triad-',
-                      paste(ex[[1]], collapse = ''), '-', ex[[2]], suf))
-    plotTriad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
-               events = rep('', sum(unlist(ex))))
-    dev.off()
+  par(mar = rep(0, 4))
+  img(height = 4 / triad.scale, width = 3.33 / triad.scale,
+      file = paste0(figloc, 'fig-triad-',
+                    paste(ex[[1]], collapse = ''), '-', ex[[2]], suf))
+  plot_triad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
+             events = rep('', sum(unlist(ex))))
+  dev.off()
 }
 
 for(ex in example.triads) {
-    par(mar = rep(0, 4))
-    img(height = 4 / triad.scale, width = 3.33 / triad.scale,
-        file = paste0(figloc, 'fig-triad-anon-',
-                      paste(ex[[1]], collapse = ''), '-', ex[[2]], suf))
-    plotTriad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
-               actors = rep('', 3),
-               events = rep('', sum(unlist(ex))))
-    dev.off()
+  par(mar = rep(0, 4))
+  img(height = 4 / triad.scale, width = 3.33 / triad.scale,
+      file = paste0(figloc, 'fig-triad-anon-',
+                    paste(ex[[1]], collapse = ''), '-', ex[[2]], suf))
+  plot_triad(ex[[1]], ex[[2]], cex = triad.scale, scale = .25,
+             actors = rep('', 3),
+             events = rep('', sum(unlist(ex))))
+  dev.off()
 }
 
 par(mar = rep(0, 4))
 img(height = 4 / triad.scale, width = 3.33 / triad.scale,
     file = paste0(figloc, 'fig-triad-induced1', suf))
-plotTriad(c(1, 0, 0), 1, cex = triad.scale, scale = .25,
+plot_triad(c(1, 0, 0), 1, cex = triad.scale, scale = .25,
            actors = c('i', 'j', 'k'), events = c('d', 'e'))
 dev.off()
 
 par(mar = rep(0, 4))
 img(height = 4 / triad.scale, width = 3.33 / triad.scale,
     file = paste0(figloc, 'fig-triad-induced2', suf))
-plotTriad(c(2, 1, 0), 1, cex = triad.scale, scale = .25,
+plot_triad(c(2, 1, 0), 1, cex = triad.scale, scale = .25,
            actors = c('i', 'j', 'k'), events = c('d', 'f', 'g', 'e'))
 dev.off()
 
 # traditional network triads
-tr <- an.triad(c(0, 0, 0), 1)
-layout <- layout.triad(lambda = c(0, 0, 0), w = 1)
+tr <- an_triad(c(0, 0, 0), 1)
+layout <- layout_triad(lambda = c(0, 0, 0), w = 1)
 tr2 <- add.edges(delete.vertices(tr, 4), c(1, 2, 2, 3))
 tr3 <- add.edges(tr2, c(1, 3))
 layout <- layout[1:3, ]
 xlim <- c(-1.4, 1.4)
 ylim <- c(-1.4, 1.4)
 
-# plot as in plotTriad
+# plot as in plot_triad
 par(mar = rep(0, 4))
 img(height = 4 / triad.scale, width = 3.33 / triad.scale,
     file = paste0(figloc, 'fig-triad-uni2', suf))

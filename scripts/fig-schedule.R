@@ -1,4 +1,5 @@
 # Figure: An affiliation network and two of its scheduled subgraphs
+library(igraph)
 library(bitriad)
 source('code/triadic-base.R')
 
@@ -30,7 +31,7 @@ frame.mat <- matrix(c(lfr.xran[1] - .25 * diff(lfr.xran),
 # Plot
 img(width = wid, height = 2 * wid,
     file = paste0(figloc, 'fig-sched', suf))
-plot(add.vertices(g, 4),
+plot(add_vertices(g, 4),
      layout = rbind(lfr, frame.mat),
      vertex.label = c(V(g)$name, rep('', 4)),
      vertex.shape = c(g.shape[V(g)$type + 1], rep('circle', 4)),
@@ -46,7 +47,7 @@ dev.off()
 rm.nodes <- c(5, 10, 11, 12)
 img(width = wid, height = 2 * wid,
     file = paste0(figloc, 'fig-sched1', suf))
-plot(add.vertices(delete.vertices(g, rm.nodes), 4),
+plot(add_vertices(delete_vertices(g, rm.nodes), 4),
      layout = rbind(lfr[-rm.nodes, ], frame.mat),
      vertex.label = c(V(g)$name[-rm.nodes], rep('', 4)),
      vertex.shape = c(g.shape[V(g)$type + 1][-rm.nodes], rep('circle', 4)),
@@ -62,7 +63,7 @@ dev.off()
 rm.nodes <- c(1, 2, 8, 9, 11, 12)
 img(width = wid, height = 2 * wid,
     file = paste0(figloc, 'fig-sched2', suf))
-plot(add.vertices(delete.vertices(g, rm.nodes), 4),
+plot(add_vertices(delete_vertices(g, rm.nodes), 4),
      layout = rbind(lfr[-rm.nodes, ], frame.mat),
      vertex.label = c(V(g)$name[-rm.nodes], rep('', 4)),
      vertex.shape = c(g.shape[V(g)$type + 1][-rm.nodes], rep('circle', 4)),
