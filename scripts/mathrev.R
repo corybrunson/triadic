@@ -2,7 +2,7 @@
 classes <- c('numeric', 'integer', rep('character', 3))
 mathrev <- data.frame()
 for(i in 0:4) mathrev <- rbind(mathrev, read.table(
-    paste0('../../data/distdata1985-2009/distdata',
+    paste0('data/distdata1985-2009/distdata',
            1985 + i * 5, '-', 1989 + i * 5, '.csv'),
     header = FALSE, sep = ',', colClasses = classes))
 names(mathrev) <- c('index', 'year', 'authors', 'pclass', 'sclass')
