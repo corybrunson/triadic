@@ -46,10 +46,14 @@ for(i in example.incl) {
   # Compute local diagnostics on empirical networks
   C.vec <- c(transitivity(graph, type = 'global'),
              transitivity(graph, type = 'local', vids = vs1))
-  C.O.vec <- c(opsahl_transitivity(example[[i]], type = 'global'),
-               opsahl_transitivity(example[[i]], type = 'local', vids = vs2))
-  C.X.vec <- c(excl_transitivity(example[[i]], type = 'global'),
-               excl_transitivity(example[[i]], type = 'local', vids = vs2))
+  C.O.vec <- c(
+    triad_closure_opsahl(example[[i]], type = 'global'),
+    triad_closure_opsahl(example[[i]], type = 'local', actors = vs2)
+  )
+  C.X.vec <- c(
+    triad_closure_exclusive(example[[i]], type = 'global'),
+    triad_closure_exclusive(example[[i]], type = 'local', actors = vs2)
+  )
   # Initialization of data frames, one for each actor
   dfs <- lapply(0:length(vs1), function(v) {
     data.frame(C = C.vec[v + 1],
@@ -67,11 +71,11 @@ for(i in example.incl) {
         transitivity(s.proj, vids = vs1, type = 'local'))
     })
     C.O.mat <- sapply(sim[[1]], function(s) {
-      wedges <- opsahl_transitivity(s, vids = vs2, type = '')
+      wedges <- triad_closure_opsahl(s, actors = vs2, type = 'raw')
       c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
     })
     C.X.mat <- sapply(sim[[1]], function(s) {
-      wedges <- excl_transitivity(s, vids = vs2, type = '')
+      wedges <- triad_closure_exclusive(s, actors = vs2, type = 'raw')
       c(sum(wedges[, 2]) / sum(wedges[, 1]), wedges[, 2] / wedges[, 1])
     })
     S = 1 / exp(sim$log.prob)
