@@ -19,16 +19,20 @@ wedges.df <- function(bigraph) {
   df1 <- data.frame(Wedges = w.s.wedges, Closed = w.s.closed)
   df1$Closed[is.nan(df1$Closed)] <- 0
   df2 <- as.data.frame(do.call(cbind, lapply(
-    c(
-      injequ_wedges, # Opsahl
-      indstr_wedges, # Exclusive
-      injstr_wedges,
-      injact_wedges,
-      indequ_wedges
+    list(
+      c(0, 0, 1, 0), # Opsahl
+      c(0, 0, 2, 1), # Exclusive
+      c(0, 0, 1, 1),
+      c(0, 0, 1, 2),
+      c(0, 0, 2, 0)
     ),
-    function(f) {
-      transitivity_an(bigraph, type = 'both', wedgeFun = f)
-    })))
+    function(xwmc) {
+      triad_closure(
+        bigraph, type = 'raw',
+        alcove = xwmc[1], wedge = xwmc[2], maps = xwmc[3], congruence = xwmc[4]
+      )
+    }
+  )))
   df <- cbind(df1, df2)
   names(df) <- paste0(rep(c('Classical',
                             'Opsahl',
@@ -36,7 +40,8 @@ wedges.df <- function(bigraph) {
                             'InjectiveStructural',
                             'InjectiveActor',
                             'InducedEqual'), each = 2),
-                      '.', names(df))
+                      '.',
+                      rep(c('Wedges', 'Closed'), times = 6))
   df
 }
 
