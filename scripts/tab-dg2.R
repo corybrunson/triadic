@@ -40,15 +40,15 @@ V(dg2)$time[V(dg2)$type] <- 1:5
 # Measures of triadic closure
 dg2.tc <- rbind(
   c(
-    transitivity(actor_projection(dg2), type = 'global')
-    , opsahl_transitivity(dg2, type = 'global')
-    , excl_transitivity(dg2, type = 'global')
+    triad_closure(actor_projection(dg2), type = 'global')
+    , triad_closure_opsahl(dg2, type = 'global')
+    , triad_closure_exclusive(dg2, type = 'global')
     #, dynamic_transitivity_an(dg2, type = 'global')
   ),
   do.call(cbind, list(
-    transitivity(actor_projection(dg2), type = 'local')
-    , opsahl_transitivity(dg2, type = 'local')
-    , excl_transitivity(dg2, type = 'local')
+    triad_closure(actor_projection(dg2), type = 'local')
+    , triad_closure_opsahl(dg2, type = 'local')
+    , triad_closure_exclusive(dg2, type = 'local')
     #, dynamic_transitivity_an(dg2, type = 'local')
   ))
 )
