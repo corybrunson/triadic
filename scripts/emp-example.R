@@ -13,19 +13,19 @@ load('calc/example-model.RData')
 
 # Function to evaluate global clustering coefficients
 eval.global <- function(bigraph) {
-  c(transitivity(actor_projection(bigraph)),
-    opsahl_transitivity(bigraph),
-    excl_transitivity(bigraph))
+  c(triad_closure(actor_projection(bigraph)),
+    triad_closure_opsahl(bigraph),
+    triad_closure_exclusive(bigraph))
 }
 
 # Function to evaluate local clustering coefficients
 eval.local <- function(bigraph, vids) {
   proj.vids <- which(which(!V(bigraph)$type) %in% vids)
   stopifnot(length(proj.vids) == length(vids))
-  el <- cbind(transitivity(actor_projection(bigraph),
-                           type = 'local', vids = proj.vids),
-              opsahl_transitivity(bigraph, type = 'local', vids = vids),
-              excl_transitivity(bigraph, type = 'local', vids = vids))
+  el <- cbind(triad_closure(actor_projection(bigraph),
+                            type = 'local', vids = proj.vids),
+              triad_closure_opsahl(bigraph, type = 'local', actors = vids),
+              triad_closure_exclusive(bigraph, type = 'local', actors = vids))
   if (is_dynamic_an(bigraph)) {
     el <- cbind(el,
                 dynamic_transitivity_an(bigraph, type = 'local')[proj.vids])
@@ -41,7 +41,7 @@ example.gcc <- t(sapply(example[wh.ex], eval.global))
 colnames(example.gcc) <- c('Classical', 'Opsahl', 'Exclusive')
 
 # Print global clustering coefficients for each network
-print('Global clustering coefficients for small networks')
+print('Global clustering coefficients for small networks:')
 print(round(example.gcc, 3))
 
 # Compute global and local statistics on DG1 and GWF
@@ -217,8 +217,6 @@ for (ntwk in unique(example.melt$Network)) {
 
 # Set number of digits
 ndig <- 3
-
-
 
 # Rename model columns
 for (i in 1:length(example.model)) {

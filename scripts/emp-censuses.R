@@ -9,7 +9,7 @@ load('calc/mathrev-census.RData')
 int.incl <- c(1, 3)
 
 # DG1, GWF, and two MR structural censuses
-ftc2stc <- function(ftc) project_census(ftc, scheme = "full")$structural
+ftc2stc <- function(ftc) project_census(ftc, scheme = "full")$binary
 stc.list <- c(
     lapply(example.census[c('DG1', 'GWF')], ftc2stc)
     , lapply(mathrev.census[int.incl], ftc2stc)
@@ -20,12 +20,6 @@ names(stc.list) <- c(
              paste0(yrs[int.incl] - 2, '-', substr(yrs[int.incl], 4, 4)),
              ')')
 )
-
-# Row and column names
-for(i in 1:length(stc.list)) {
-    rownames(stc.list[[i]]) <- 0:3
-    colnames(stc.list[[i]]) <- 0:1
-}
 
 # Write tables together
 latex.tables(list = stc.list, digits = 0,
