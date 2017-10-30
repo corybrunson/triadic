@@ -13,35 +13,35 @@ applied2 <- sprintf('%02d', 60:96)
 
 mathrev.pure <- mathrev[substr(mathrev$pclass, 1, 2) %in% pure2, ]
 mathrev.pure.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
-  dynamic_transitivity_an(
-    as_an(paper.author.graph(
+  dynamic_triad_closure_projection(
+    as_dynamic_an(paper.author.graph(
       mathrev.pure[mathrev.pure$year %in% (yr - dur + 1):yr, ]
     )),
     memory = Inf,
-    type = 'both'
+    type = 'raw'
   )
 })
 print('Pure done')
 
 mathrev.applied <- mathrev[substr(mathrev$pclass, 1, 2) %in% applied2, ]
 mathrev.applied.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
-  dynamic_transitivity_an(
-    as_an(paper.author.graph(
+  dynamic_triad_closure_projection(
+    as_dynamic_an(paper.author.graph(
       mathrev.applied[mathrev.applied$year %in% (yr - dur + 1):yr, ]
     )),
     memory = Inf,
-    type = 'both'
+    type = 'raw'
   )
 })
 print('Applied done')
 
 mathrev.closed <- lapply((ran[1] + dur - 1):ran[2], function(yr) {
-  dynamic_transitivity_an(
-    as_an(paper.author.graph(
+  dynamic_triad_closure_projection(
+    as_dynamic_an(paper.author.graph(
       mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
     )),
     memory = Inf,
-    type = 'both'
+    type = 'raw'
   )
 })
 print('Aggregate done')
