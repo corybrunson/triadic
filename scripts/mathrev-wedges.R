@@ -18,18 +18,18 @@ wedges.df <- function(bigraph) {
   w.s.closed[which(is.na(w.s.closed))] <- 0
   df1 <- data.frame(Wedges = w.s.wedges, Closed = w.s.closed)
   df1$Closed[is.nan(df1$Closed)] <- 0
+  ct <- lapply(V1(bigraph), centered_triads, graph = bigraph)
   df2 <- as.data.frame(do.call(cbind, lapply(
-    list(
-      c(0, 0, 1, 0), # Opsahl
-      c(0, 0, 2, 1), # Exclusive
-      c(0, 0, 1, 1),
-      c(0, 0, 1, 2),
-      c(0, 0, 2, 0)
+    c(
+      "injequ", # Opsahl
+      "indstr", # exclusive
+      "injstr",
+      "injact",
+      "indequ"  # Liebig-Rao 0
     ),
-    function(xwmc) {
-      triad_closure(
-        bigraph, type = 'raw',
-        alcove = xwmc[1], wedge = xwmc[2], maps = xwmc[3], congruence = xwmc[4]
+    function(measure) {
+      triad_closure_from_centered_triads(
+        ct, type = 'raw', measure = measure
       )
     }
   )))
