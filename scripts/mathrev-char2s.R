@@ -39,15 +39,17 @@ char2s.census <- lapply(years[-(1:2)], function(yr) {
 # Compute global statistics for each subdiscipline
 char2s.global <- lapply(char2s.census, function(lst) {
   do.call(rbind, lapply(lst, function(census) {
-    c("C" = transitivity_from_census(census, "classical", scheme = "full"),
-      "C.opsahl" = transitivity_from_census(census, "opsahl", scheme = "full"),
-      "C.excl" = transitivity_from_census(census, "exclusive", scheme = "full"),
-      "C.injstr" = transitivity_from_census(census, "injstr", scheme = "full"),
-      "C.injact" = transitivity_from_census(census, "injact", scheme = "full"),
-      "T" = transitivity_from_census(census, "classical", scheme = "full"),
-      "T.excl" = transitivity_from_census(census, "exclusive", scheme = "full"),
-      "T.injact" = transitivity_from_census(census, "injact", scheme = "full")
+    x <- sapply(c(
+      "classical", "opsahl", "exclusive", "injstr", "injact",
+      "classical", "exclusive", "injact"
+    ), function(measure) triad_closure_from_census(
+      census = census, measure = measure, scheme = "full"
+    ))
+    names(x) <- c(
+      paste0("C", c("", ".opsahl", ".excl", ".injstr", ".injact")),
+      paste0("T", c("", ".excl", ".injact"))
     )
+    x
   }))
 })
 
@@ -66,9 +68,10 @@ char2s.closed <- lapply(years[-(1:2)], function(yr) {
   dat <- mathrev[mathrev$year %in% (yr - dur + 1):yr, ]
   sapply(char2s, function(s) {
     sdat <- dat[substr(dat$pclass, 1, 2) == s, ]
-    dynamic_transitivity_an(as_an(paper.author.graph(sdat)),
-                            memory = Inf,
-                            type = 'global')
+    dynamic_triad_closure_an(as_dynamic_an(paper.author.graph(sdat)),
+                             measure = "projection",
+                             memory = Inf,
+                             type = 'global')
   })
 })
 
