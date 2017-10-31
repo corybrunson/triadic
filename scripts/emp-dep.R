@@ -8,10 +8,10 @@ load('calc/mathrev-closes.RData')
 load('calc/mathrev-closed.RData')
 
 # Which statistics to include
-stats <- c(project_transitivity,
-           opsahl_transitivity,
-           indequ_transitivity,
-           excl_transitivity)
+stats <- c("classical",
+           "opsahl",
+           "indequ",
+           "exclusive")
 stat.variety <- c('Classical', 'Opsahl', 'InducedEqual', 'Exclusive')
 ex.incl <- c(1, 2, 4)
 mr.incl <- c(1, 2, 4)
@@ -21,7 +21,7 @@ incl.dyn <- FALSE
 example.incl <- which(names(example) %in% c('DG1', 'GWF'))
 example.wedges <- do.call(rbind, unlist(lapply(example.incl, function(i) {
   lapply(ex.incl, function(j) {
-    wedges <- stats[[j]](example[[i]], type = '')
+    wedges <- triad_closure(example[[i]], type = 'raw', measure = stats[[j]])
     data.frame(Network = names(example)[i],
                Actor = V(example[[i]])$name[!V(example[[i]])$type],
                Variety = stat.variety[j],
