@@ -14,7 +14,7 @@ The code in this repo makes use of 24 years of data from [*Mathematical Reviews*
 
 The following steps should generate (subject to differences in random seeds) all calculations and visualizations used in the paper:
 
-* Clone this repo to a machine with R installed (version >= 3.3.2).
+* Clone this repo to a machine with R installed (version `>= 3.3.2`).
 * From within the `triadic` directory, execute `triadic.R`. Alternatively, open `triadic.R` in a text editor or [RStudio](http://www.rstudio.com/) and execute the commands (which mostly source other files) in order. (The file begins by checking for and, as necessary, installing packages required for the analysis.)
 
 Some of the calculations on *MR* data may take a *long* time (e.g. several hours on a 3.2 GHz Intel Core i5).
